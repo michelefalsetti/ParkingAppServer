@@ -15,9 +15,6 @@ public class User {
     @Column(name= "id")
     private Long  id;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "nome")
     private String firstName;
 
@@ -30,11 +27,19 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    public User(String username, String encode, String email, String nome, String cognome) {
-        this.username = username;
+    @Column(name = "datanascita")
+    private String birthdate;
+
+    @Column(name = "numeroditelefono")
+    private String cellnumber;
+
+    public User(String encode, String email, String nome, String cognome,String datanascita,String numeroditelefono) {
         this.password = encode;
         this.email = email;
         this.firstName=nome;
         this.lastName=cognome;
+        this.birthdate=datanascita;
+        this.cellnumber=numeroditelefono;
+
     }
 }

@@ -12,11 +12,10 @@ import project.ParkingAppServer.data.entities.User;
 @Repository
 public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
 
-    User findByUsername(String username);
     User findByEmail(String email);
     @Transactional
     @Modifying
-    @Query("UPDATE User w SET w.password = :nuovaPassword WHERE w.username = :username")
-    void aggiornaPassword(@Param("username") String username, @Param("nuovaPassword") String nuovaPassword);
+    @Query("UPDATE User w SET w.password = :nuovaPassword WHERE w.email = :email")
+    void aggiornaPassword(@Param("email") String email, @Param("nuovaPassword") String nuovaPassword);
 }
 

@@ -11,10 +11,6 @@ import lombok.ToString;
 public class UserDTO {
     private int id;
 
-    @NotBlank(message = "L'username non può essere vuoto")
-    @Size(max = 50)
-    private String username;
-
     @NotBlank(message = "Il nome non può essere vuoto")
     @Size(max = 50)
     private String nome;
@@ -32,5 +28,13 @@ public class UserDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
             message = "La password deve contenere almeno una lettera minuscola, una lettera maiuscola e un numero")
     private String password;
+
+    @NotBlank(message = "La data di nascita non può essere vuota")
+    @Size(max = 50)
+    private String datanascita;
+
+    @NotBlank(message = "Il numero di telefono non può essere vuota")
+    @Size(max = 50)
+    private String numerotelefono;
 
 }
