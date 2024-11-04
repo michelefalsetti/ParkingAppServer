@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
 @Entity
 @Table (name = "utenti")
 @Data
@@ -11,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name= "id")
-    private Long  id;
+    private UUID id;
 
     @Column(name = "nome")
     private String firstName;
@@ -28,12 +31,12 @@ public class User {
     private String password;
 
     @Column(name = "datanascita")
-    private String birthdate;
+    private LocalDate birthdate;
 
     @Column(name = "numeroditelefono")
     private String cellnumber;
 
-    public User(String encode, String email, String nome, String cognome,String datanascita,String numeroditelefono) {
+    public User(String encode, String email, String nome, String cognome,LocalDate datanascita,String numeroditelefono) {
         this.password = encode;
         this.email = email;
         this.firstName=nome;

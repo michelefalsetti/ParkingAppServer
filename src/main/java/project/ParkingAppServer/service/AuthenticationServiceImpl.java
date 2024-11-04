@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import project.ParkingAppServer.data.dao.UserDao;
 import project.ParkingAppServer.data.entities.User;
 
+import java.time.LocalDate;
+
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserDao userRepository;
@@ -43,7 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String email,
             String nome,
             String cognome,
-            String datanascita,
+            LocalDate datanascita,
             String numerotelefono) {
 
 

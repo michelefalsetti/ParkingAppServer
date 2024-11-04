@@ -3,6 +3,8 @@ package project.ParkingAppServer.service;
 import org.springframework.http.ResponseEntity;
 import project.ParkingAppServer.data.entities.User;
 
+import java.time.LocalDate;
+
 public interface AuthenticationService {
     void authenticate(String email, String password);
 
@@ -10,7 +12,7 @@ public interface AuthenticationService {
                                    String email,
                                    String nome,
                                    String cognome,
-                                   String datanascita,
+                                   LocalDate datanascita,
                                    String numerotelefono
                                   );
 

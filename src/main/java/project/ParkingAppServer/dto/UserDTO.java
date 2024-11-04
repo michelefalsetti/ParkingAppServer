@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
 @NoArgsConstructor
 @ToString
 @Data
 public class UserDTO {
-    private int id;
+    private UUID id;
 
     @NotBlank(message = "Il nome non può essere vuoto")
     @Size(max = 50)
@@ -31,7 +34,7 @@ public class UserDTO {
 
     @NotBlank(message = "La data di nascita non può essere vuota")
     @Size(max = 50)
-    private String datanascita;
+    private LocalDate datanascita;
 
     @NotBlank(message = "Il numero di telefono non può essere vuota")
     @Size(max = 50)
