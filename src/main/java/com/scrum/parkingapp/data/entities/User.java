@@ -23,9 +23,11 @@ public class User {
     @Column(name= "ID")
     private UUID id;
 
+    @Basic(optional = false)
     @Column(name = "FIRSTNAME")
     private String firstName;
 
+    @Basic(optional = false)
     @Column(name = "LASTNAME")
     private String lastName;
 

@@ -23,8 +23,8 @@ public class ParkingSpot {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "SPOT_NUMBER", nullable = false)
-    private String spotNumber;
+    @Column(name = "NUMBER", nullable = false)
+    private String number;
 
     @ManyToOne
     @JoinColumn(

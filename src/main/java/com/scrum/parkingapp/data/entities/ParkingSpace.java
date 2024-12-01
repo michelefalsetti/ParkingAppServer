@@ -25,12 +25,12 @@ public class ParkingSpace {
     @OneToMany(mappedBy = "parkingspaceId", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ParkingSpot> parkingSpots = new ArrayList<>();
 
-    @Column(name = "PARKING_NAME", nullable = false)
-    private String parkingName;
+    @Column(name = "NAME", nullable = false)
+    private String name;
 
-    @Column(name = "PARKING_ADDRESS", nullable = false)
-    private String parkingAddress;
+    @Column(name = "ADDRESS", nullable = false)
+    private String address;
 
-    @Column(name = "PARKING_CITY", nullable = false)
-    private String parkingCity;
+    @Column(name = "CITY", nullable = false)
+    private String city;
 }

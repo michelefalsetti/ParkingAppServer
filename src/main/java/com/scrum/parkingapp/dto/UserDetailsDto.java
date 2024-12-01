@@ -15,6 +15,4 @@ public class UserDetailsDto {
 
     private String email;
 
-    private String phoneNumber;
-
 }
