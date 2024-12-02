@@ -1,19 +1,12 @@
-package com.scrum.parkingapp.repositoryTest;
+package com.scrum.parkingapp.ServiceTest;
 
-import com.scrum.parkingapp.controller.AuthController;
 import com.scrum.parkingapp.data.dao.UsersDao;
-import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.data.service.AuthService;
-import com.scrum.parkingapp.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
