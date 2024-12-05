@@ -222,13 +222,6 @@
 			<version>2.15.2</version> <!-- Verifica la versione del tuo progetto -->
 		</dependency>
 
-
-
-
-
-
-
-
 	</dependencies>
 
 	<build>
