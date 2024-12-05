@@ -52,6 +52,7 @@ import java.util.UUID;
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc
 @Import(SecurityConfig.class)
+@ActiveProfiles("test")
 public class AuthControllerTest {
 
     @Autowired
