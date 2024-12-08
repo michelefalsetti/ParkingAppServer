@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 
         Owner owner = modelMapper.map(userDto, Owner.class);
         owner.getCredential().setPassword(hashedPassword);
-        System.out.println("Admin: " + owner);
+        System.out.println("Owner: " + owner);
 
         userDao.save(owner);
 

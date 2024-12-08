@@ -54,8 +54,12 @@ public class SecurityConfig {
                     auth.requestMatchers("api/v1/admin/register").permitAll();
                     auth.requestMatchers("/error").permitAll();
 
+
+                    auth.requestMatchers("/api/v1/parkingSpaces/**").authenticated();
+                    auth.requestMatchers("/api/v1/parkingSpots/**").authenticated();
+                    auth.requestMatchers("/api/v1/reservations/**").authenticated();
+
                     auth.requestMatchers("/api/v1/shopping-cart/get/total/**").authenticated();
-                    auth.requestMatchers("/api/v1/orders/**").authenticated();
                                 auth.requestMatchers("/api/v1/transactions/**").authenticated();
                                 auth.requestMatchers("/swagger-ui/**").permitAll();
                                 auth.requestMatchers("/swagger-ui.html").permitAll();

@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
 
     private final UsersDao userDao;
 
-
     private final ModelMapper modelMapper;
 
     private final PasswordEncoder passwordEncoder;
