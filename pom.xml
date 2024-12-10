@@ -222,13 +222,6 @@
 			<version>2.15.2</version> <!-- Verifica la versione del tuo progetto -->
 		</dependency>
 
-
-
-
-
-
-
-
 	</dependencies>
 
 	<build>
@@ -244,7 +237,19 @@
 						</exclude>
 					</excludes>
 				</configuration>
+
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<forkCount>1</forkCount>
+					<reuseForks>true</reuseForks>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

@@ -44,6 +44,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.registerUser(userDto));
     }
 
+    @PostMapping(consumes = "application/json", path = "/registerOwner")
+    public ResponseEntity<UserDetailsDto> registerOwner(@Valid @RequestBody SaveUserDto userDto) {
+        return ResponseEntity.ok(authService.registerOwner(userDto));
+    }
+
     @PostMapping(consumes = "application/json", path = "/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody CredentialDto credentials) {
         log.info("Received request for auth/login");

@@ -1,13 +1,7 @@
 package com.scrum.parkingapp.config;
 
-import com.scrum.parkingapp.data.entities.Admin;
-import com.scrum.parkingapp.data.entities.PaymentMethod;
-import com.scrum.parkingapp.data.entities.RefreshToken;
-import com.scrum.parkingapp.data.entities.User;
-import com.scrum.parkingapp.dto.PaymentMethodDto;
-import com.scrum.parkingapp.dto.SaveUserDto;
-import com.scrum.parkingapp.dto.UserDetailsDto;
-import com.scrum.parkingapp.dto.UserDto;
+import com.scrum.parkingapp.data.entities.*;
+import com.scrum.parkingapp.dto.*;
 import com.scrum.parkingapp.dto.security.RefreshTokenDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -75,6 +69,19 @@ public class ModelMapperConfig {
             @Override
             protected void configure(){
                 map(source.getToken(), destination.getToken());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<ReservationDto, Reservation>() {
+            @Override
+            protected void configure() {
+                map(source.getId(), destination.getId());
+                map(source.getDriver().getUserId(), destination.getDriver().getId());
+                map(source.getParkingSpot().getId(), destination.getParkingSpot().getId());
+                map(source.getPrice(), destination.getPrice());
+                map(source.getLicensePlate(), destination.getLicensePlate());
+                map(source.getStartDate(), destination.getStartDate());
+                map(source.getEndDate(), destination.getEndDate());
             }
         });
 
