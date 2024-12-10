@@ -54,12 +54,12 @@ public class ReservationController {
 
     @PostMapping(path= "/add/{idUser}")
     @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<Boolean> addReservation(@PathVariable UUID idUser, @RequestBody ReservationDto reservationDto) {
+    public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser, @RequestBody ReservationDto reservationDto) {
         System.out.println("pre add reservation");
         ReservationDto rDto = reservationService.save(reservationDto);
         if (rDto == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return new ResponseEntity<>(rDto, HttpStatus.OK);
     }
 
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -41,9 +42,9 @@ public class Reservation {
 
 
     @Column(name = "START_DATE", nullable = false)
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "END_DATE", nullable = false)
-    private Date endDate;
+    private LocalDateTime endDate;
 
 }
