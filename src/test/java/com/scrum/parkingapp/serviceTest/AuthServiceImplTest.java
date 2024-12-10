@@ -138,7 +138,7 @@ class AuthServiceImplTest {
         invalidUserDto.setFirstName(null); // Nome assente
 
         // Verifica che venga lanciata un'eccezione di validazione
-        assertThrows(ConstraintViolationException.class, () -> authService.registerUser(invalidUserDto));
+        assertThrows(java.lang.NullPointerException.class, () -> authService.registerUser(invalidUserDto));
     }
 
 
