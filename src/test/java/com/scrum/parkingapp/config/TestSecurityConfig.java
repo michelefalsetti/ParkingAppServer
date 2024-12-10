@@ -17,6 +17,10 @@ public class TestSecurityConfig {
                 .csrf(csrf -> csrf.disable())  // Disabilita CSRF
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()  // Permetti senza autenticazione
+                        .requestMatchers("/api/v1/parkingSpaces/**").authenticated()
+                        .requestMatchers("/api/v1/parkingSpots/**").authenticated()
+                        .requestMatchers("/api/v1/reservations/**").authenticated()
+
                         .anyRequest().authenticated())  // Richiedi autenticazione per tutte le altre richieste
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));  // Usa la gestione stateless (adatta per API REST)

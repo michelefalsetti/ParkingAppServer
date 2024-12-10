@@ -46,13 +46,13 @@ public class ParkingSpaceController {
 
     @PostMapping(path= "/add")
     @PreAuthorize("#parkingSpaceDto.getOwner().getUserId() == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<Boolean> addParkingSpace(@Valid @RequestBody ParkingSpaceDto parkingSpaceDto) {
+    public ResponseEntity<ParkingSpaceDto> addParkingSpace(@Valid @RequestBody ParkingSpaceDto parkingSpaceDto) {
         System.out.println("pre add");
         ParkingSpaceDto psDto = parkingSpaceService.save(parkingSpaceDto);
         System.out.println("post add");
         if (psDto == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return new ResponseEntity<>(psDto, HttpStatus.OK);
     }
 
 
