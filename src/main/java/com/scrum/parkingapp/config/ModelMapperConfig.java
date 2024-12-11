@@ -72,16 +72,40 @@ public class ModelMapperConfig {
             }
         });
 
+        /*
+        modelMapper.addMappings(new PropertyMap<LicensePlateDto, LicensePlate>() {
+            @Override
+            protected void configure() {
+                map(source.get, destination.getLpNumber());
+                map(source.getDriver(), destination.getDriver());
+            }
+        });*/
+
+
         modelMapper.addMappings(new PropertyMap<ReservationDto, Reservation>() {
             @Override
             protected void configure() {
-                map(source.getId(), destination.getId());
-                map(source.getDriver().getUserId(), destination.getDriver().getId());
-                map(source.getParkingSpot().getId(), destination.getParkingSpot().getId());
+                /*
+                System.out.println("ID: " + source.getId() + " " + destination.getId());
+                map(source.getId(), destination.getId());*/
+
+                map(source.getDriverId(), destination.getDriver().getId());
+
+                map(source.getLicensePlateId() , destination.getLicensePlate().getDriver().getId());
+
+                map(source.getParkingSpotId() , destination.getParkingSpot().getId());
+
+                /*
+                System.out.println("ParkingSpot ID: " + source.getParkingSpot() + " " + destination.getParkingSpot());
+                map(source.getParkingSpot().getId(), destination.getParkingSpot().getId() );
+
+                System.out.println("Price: " + source.getPrice() + " " + destination.getPrice());
                 map(source.getPrice(), destination.getPrice());
-                map(source.getLicensePlate(), destination.getLicensePlate());
+
+                System.out.println("LicensePlate: " + source.getLicensePlate() + " " + destination.getLicensePlate());
+                map(source.getLicensePlate().getId(), destination.getLicensePlate().getLicensePlateId());
                 map(source.getStartDate(), destination.getStartDate());
-                map(source.getEndDate(), destination.getEndDate());
+                map(source.getEndDate(), destination.getEndDate());*/
             }
         });
 

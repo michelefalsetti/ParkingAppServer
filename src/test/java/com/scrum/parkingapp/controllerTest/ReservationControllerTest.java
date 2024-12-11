@@ -7,16 +7,14 @@ import com.scrum.parkingapp.config.security.JwtService;
 import com.scrum.parkingapp.config.security.LoggedUserDetails;
 import com.scrum.parkingapp.config.security.LoggedUserDetailsService;
 import com.scrum.parkingapp.config.security.SecurityConfig;
-import com.scrum.parkingapp.controller.ParkingSpotController;
 import com.scrum.parkingapp.controller.ReservationController;
-import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.entities.Reservation;
-import com.scrum.parkingapp.data.service.ParkingSpotService;
 import com.scrum.parkingapp.data.service.RefreshTokenService;
 import com.scrum.parkingapp.data.service.ReservationService;
 import com.scrum.parkingapp.data.service.RevokedTokenService;
 import com.scrum.parkingapp.dto.*;
 import com.scrum.parkingapp.utils.WithMockCustomUser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
@@ -33,8 +31,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,8 +113,8 @@ public class ReservationControllerTest {
 
         UserIdDto driver = new UserIdDto();
         driver.setUserId(loggedUser.getId());
-        LicensePlateDtoId licensePlateDtoId = new LicensePlateDtoId();
-        licensePlateDtoId.setId(1L);
+        LicensePlateIdDto licensePlateIdDto = new LicensePlateIdDto();
+        licensePlateIdDto.setId(1L);
 
         ReservationDto reservationDto = new ReservationDto();
         reservationDto.setId(1L);
@@ -123,7 +123,7 @@ public class ReservationControllerTest {
         reservationDto.setStartDate(startDate);
         reservationDto.setEndDate(endDate);
         reservationDto.setPrice(10.0);
-        reservationDto.setLicensePlate(licensePlateDtoId);
+        reservationDto.setLicensePlate(licensePlateIdDto);
 
         return reservationDto;
     }
@@ -161,6 +161,22 @@ public class ReservationControllerTest {
         parkingSpaceDto.setOwner(owner);
         return parkingSpaceDto;
     }
+
+
+    @Test
+    void testMappingReservationDtoToReservation() {
+        ReservationDto reservationDto = new ReservationDto();
+        reservationDto.setPrice(50.0);
+        UserIdDto userIdDto = new UserIdDto();
+        userIdDto.setUserId(UUID.fromString("6cf3af64-b638-4c7a-bdd3-96cec1a849c5"));
+        reservationDto.setDriver(userIdDto);
+
+        Reservation reservation = modelMapper.map(reservationDto, Reservation.class);
+
+        //Assertions.assertNotNull(reservation);
+        Assertions.assertEquals(reservationDto.getDriver().getUserId(), reservation.getDriver().getId());
+    }
+
 
     /*
     @Test

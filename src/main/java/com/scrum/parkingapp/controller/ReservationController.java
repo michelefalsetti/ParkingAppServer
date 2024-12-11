@@ -56,6 +56,7 @@ public class ReservationController {
     @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
     public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser, @RequestBody ReservationDto reservationDto) {
         System.out.println("pre add reservation");
+        log.info("Received DTO: {}", reservationDto);
         ReservationDto rDto = reservationService.save(reservationDto);
         if (rDto == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

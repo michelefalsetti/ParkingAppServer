@@ -13,7 +13,7 @@ public class LicensePlate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long licensePlateId;
+    private Long id;
 
     @Column(name = "LP_NUMBER", nullable = false)
     private String lpNumber;

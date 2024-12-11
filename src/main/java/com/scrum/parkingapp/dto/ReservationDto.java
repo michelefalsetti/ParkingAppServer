@@ -1,29 +1,25 @@
 package com.scrum.parkingapp.dto;
 
 
-import com.scrum.parkingapp.data.entities.LicensePlate;
-import com.scrum.parkingapp.data.entities.ParkingSpot;
-import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.dto.validation.ValidReservDate;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.UUID;
 
 @Data
 public class ReservationDto {
 
-    private Long id;
+    private Long id;//
+
+    private UserDto driver;//
 
     private Double price;
 
-    private UserIdDto driver;
+    private ParkingSpotDto parkingSpot;//
 
-    private LicensePlateDtoId licensePlate;
-
-    private ParkingSpotIdDto parkingSpot;
+    private LicensePlateDto licensePlate;//
 
     @ValidReservDate
     @NotNull

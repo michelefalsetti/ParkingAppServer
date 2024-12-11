@@ -118,8 +118,6 @@ public class AuthServiceImpl implements AuthService {
                     loginDto.getPassword()
             );
 
-
-
             Authentication auth = authenticationManager.authenticate(authToken);
 
 

@@ -4,6 +4,10 @@ package com.scrum.parkingapp.dto;
 import lombok.Data;
 
 @Data
-public class LicensePlateDtoId {
+public class LicensePlateDto {
+
     private Long id;
+
+    private String lpNumber;
+
 }

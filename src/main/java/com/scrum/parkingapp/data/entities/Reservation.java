@@ -18,6 +18,13 @@ public class Reservation {
     @Column(name = "ID")
     private Long id;
 
+    @OneToOne(optional = false)
+    @JoinColumn(
+            name = "DRIVER_ID",
+            referencedColumnName = "ID"
+    )
+    private User driver;
+
     @Column(name = "PRICE", nullable = false)
     private Double price;
 
@@ -29,12 +36,7 @@ public class Reservation {
     )
     private ParkingSpot parkingSpot;
 
-    @OneToOne(optional = false)
-    @JoinColumn(
-            name = "DRIVER_ID",
-            referencedColumnName = "ID"
-    )
-    private User driver;
+
 
     @OneToOne(optional = false)//da cambiare?
     private LicensePlate licensePlate;
