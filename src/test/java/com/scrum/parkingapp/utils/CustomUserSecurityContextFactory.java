@@ -42,7 +42,7 @@ public class CustomUserSecurityContextFactory implements WithSecurityContextFact
         user.setCredential(credential);
         user.setBirthDate(LocalDate.of(1999, 1, 1));
         LicensePlate licensePlate = new LicensePlate();
-        licensePlate.setLicensePlateId(1L);
+        licensePlate.setId(1L);
         licensePlate.setDriver(user);
         licensePlate.setLpNumber("AA123BB");
 

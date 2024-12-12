@@ -89,11 +89,11 @@ public class ModelMapperConfig {
                 System.out.println("ID: " + source.getId() + " " + destination.getId());
                 map(source.getId(), destination.getId());*/
 
-                map(source.getDriverId(), destination.getDriver().getId());
+                map(source.getDriver(), destination.getDriver());
 
-                map(source.getLicensePlateId() , destination.getLicensePlate().getDriver().getId());
+                map(source.getLicensePlate() , destination.getLicensePlate());
 
-                map(source.getParkingSpotId() , destination.getParkingSpot().getId());
+                map(source.getParkingSpot() , destination.getParkingSpot());
 
                 /*
                 System.out.println("ParkingSpot ID: " + source.getParkingSpot() + " " + destination.getParkingSpot());

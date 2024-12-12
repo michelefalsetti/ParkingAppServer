@@ -1,4 +1,4 @@
-package com.scrum.parkingapp.serviceTest;
+package com.scrum.parkingapp.ServiceTest;
 
 import com.scrum.parkingapp.config.security.JwtService;
 import com.scrum.parkingapp.config.security.LoggedUserDetails;

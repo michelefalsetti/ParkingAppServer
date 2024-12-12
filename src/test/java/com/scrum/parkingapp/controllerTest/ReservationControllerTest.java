@@ -13,6 +13,7 @@ import com.scrum.parkingapp.data.service.RefreshTokenService;
 import com.scrum.parkingapp.data.service.ReservationService;
 import com.scrum.parkingapp.data.service.RevokedTokenService;
 import com.scrum.parkingapp.dto.*;
+import com.scrum.parkingapp.utils.DatesGetter;
 import com.scrum.parkingapp.utils.WithMockCustomUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -73,7 +75,7 @@ public class ReservationControllerTest {
     @Test
     @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
     void testAddReservation_Driver() throws Exception {
-        ReservationDto reservationDto = getReservationDto();
+        ReservationDto reservationDto = DatesGetter.getReservationDto();
 
         // Mock del ModelMapper
         Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
@@ -101,80 +103,16 @@ public class ReservationControllerTest {
         Mockito.verify(reservationService).save(Mockito.any(ReservationDto.class));
     }
 
-    private ReservationDto getReservationDto() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
-
-
-        ParkingSpotIdDto parkingSpotIdDto = new ParkingSpotIdDto();
-        parkingSpotIdDto.setId(1L);
-        LocalDateTime startDate = LocalDateTime.of(2021, 12, 1, 17, 0);
-        LocalDateTime endDate = LocalDateTime.of(2021, 12, 2, 19, 30);
-
-        UserIdDto driver = new UserIdDto();
-        driver.setUserId(loggedUser.getId());
-        LicensePlateIdDto licensePlateIdDto = new LicensePlateIdDto();
-        licensePlateIdDto.setId(1L);
-
-        ReservationDto reservationDto = new ReservationDto();
-        reservationDto.setId(1L);
-        reservationDto.setParkingSpot(parkingSpotIdDto);
-        reservationDto.setDriver(driver);
-        reservationDto.setStartDate(startDate);
-        reservationDto.setEndDate(endDate);
-        reservationDto.setPrice(10.0);
-        reservationDto.setLicensePlate(licensePlateIdDto);
-
-        return reservationDto;
-    }
-
-    private ParkingSpotDto getParkingSpotDto() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
-
-        ParkingSpaceDto parkingSpaceDto = new ParkingSpaceDto();
-        ParkingSpotDto parkingSpotDto = new ParkingSpotDto();
-        parkingSpotDto.setId(1L);
-        ParkingSpaceIdDto parkingSpaceId = new ParkingSpaceIdDto();
-        parkingSpaceId.setId(parkingSpaceDto.getId());
-
-        parkingSpotDto.setParkingSpaceId(parkingSpaceId);
-        parkingSpotDto.setNumber("TEST-1");
-        parkingSpotDto.setReservations(null);
-
-        return parkingSpotDto;
-
-    }
-
-    private static ParkingSpaceDto getParkingSpaceDto() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
-
-        ParkingSpaceDto parkingSpaceDto = new ParkingSpaceDto();
-        parkingSpaceDto.setId(1L);
-        parkingSpaceDto.setName("Test Parking");
-        parkingSpaceDto.setAddress("123 Test Street");
-        parkingSpaceDto.setCity("Test City");
-
-        UserIdDto owner = new UserIdDto();
-        owner.setUserId(loggedUser.getId());
-        parkingSpaceDto.setOwner(owner);
-        return parkingSpaceDto;
-    }
-
-
     @Test
     void testMappingReservationDtoToReservation() {
         ReservationDto reservationDto = new ReservationDto();
         reservationDto.setPrice(50.0);
-        UserIdDto userIdDto = new UserIdDto();
-        userIdDto.setUserId(UUID.fromString("6cf3af64-b638-4c7a-bdd3-96cec1a849c5"));
-        reservationDto.setDriver(userIdDto);
+        reservationDto.setDriver(DatesGetter.getUserDto("DRIVER"));
 
         Reservation reservation = modelMapper.map(reservationDto, Reservation.class);
 
         //Assertions.assertNotNull(reservation);
-        Assertions.assertEquals(reservationDto.getDriver().getUserId(), reservation.getDriver().getId());
+        Assertions.assertEquals(reservationDto.getDriver().getId(), reservation.getDriver().getId());
     }
 
 
