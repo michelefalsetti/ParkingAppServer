@@ -72,42 +72,30 @@ public class ModelMapperConfig {
             }
         });
 
-        /*
+
         modelMapper.addMappings(new PropertyMap<LicensePlateDto, LicensePlate>() {
             @Override
             protected void configure() {
-                map(source.get, destination.getLpNumber());
-                map(source.getDriver(), destination.getDriver());
+                map(source.getId(), destination.getId());
+                map(source.getLpNumber(), destination.getLpNumber());
             }
-        });*/
+        });
 
 
         modelMapper.addMappings(new PropertyMap<ReservationDto, Reservation>() {
             @Override
             protected void configure() {
-                /*
-                System.out.println("ID: " + source.getId() + " " + destination.getId());
-                map(source.getId(), destination.getId());*/
-
-                map(source.getDriver(), destination.getDriver());
-
-                map(source.getLicensePlate() , destination.getLicensePlate());
-
-                map(source.getParkingSpot() , destination.getParkingSpot());
-
-                /*
-                System.out.println("ParkingSpot ID: " + source.getParkingSpot() + " " + destination.getParkingSpot());
-                map(source.getParkingSpot().getId(), destination.getParkingSpot().getId() );
-
-                System.out.println("Price: " + source.getPrice() + " " + destination.getPrice());
+                map(source.getId(), destination.getId());
                 map(source.getPrice(), destination.getPrice());
-
-                System.out.println("LicensePlate: " + source.getLicensePlate() + " " + destination.getLicensePlate());
-                map(source.getLicensePlate().getId(), destination.getLicensePlate().getLicensePlateId());
+                map(source.getUser(), destination.getUser());
+                map(source.getLicensePlateId(), destination.getLicensePlate());
+                //map(source.getParkingSpotId(), destination.getParkingSpot());
                 map(source.getStartDate(), destination.getStartDate());
-                map(source.getEndDate(), destination.getEndDate());*/
+                map(source.getEndDate(), destination.getEndDate());
+
             }
         });
+
 
 
         return modelMapper;

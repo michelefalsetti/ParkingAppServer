@@ -13,13 +13,12 @@ public class ReservationDto {
 
     private Long id;//
 
-    private UserDto driver;//
+    private UserDto user;//
 
     private Double price;
+    private Long parkingSpotId;//
 
-    private ParkingSpotDto parkingSpot;//
-
-    private LicensePlateDto licensePlate;//
+    private Long licensePlateId;//
 
     @ValidReservDate
     @NotNull

@@ -13,7 +13,7 @@ public class ParkingSpaceDto {
 
     private Long id;
 
-    private UserIdDto owner;
+    private UserIdDto userId; //cambiato da owner a userId
 
     private List<ParkingSpotDto> parkingSpots = new ArrayList<>();
 

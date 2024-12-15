@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface ParkingSpaceDao extends JpaRepository<ParkingSpace, Long> {
 
-    @Query("SELECT ps FROM ParkingSpace ps WHERE ps.owner.id = :userId")
+    @Query("SELECT ps FROM ParkingSpace ps WHERE ps.user.id = :userId")
     List<ParkingSpace> findAllByUserId(UUID userId);
 
     @Query("SELECT ps FROM ParkingSpace ps")

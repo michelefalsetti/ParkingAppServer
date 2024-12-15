@@ -14,7 +14,7 @@ public class ParkingSpotDto {
 
     private String number;
 
-    private ParkingSpaceIdDto parkingSpaceId;
+    private Long parkingSpaceId;
 
     private List<ReservationDto> reservations = new ArrayList<>();
 }

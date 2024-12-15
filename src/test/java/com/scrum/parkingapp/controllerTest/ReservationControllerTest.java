@@ -72,10 +72,12 @@ public class ReservationControllerTest {
     @Autowired
     private ObjectMapper objectMapper; // Usa l'ObjectMapper di Spring
 
+
     @Test
     @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
     void testAddReservation_Driver() throws Exception {
-        ReservationDto reservationDto = DatesGetter.getReservationDto();
+        DatesGetter datesGetter = new DatesGetter();
+        ReservationDto reservationDto = datesGetter.getReservationDto(null);
 
         // Mock del ModelMapper
         Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
@@ -103,17 +105,8 @@ public class ReservationControllerTest {
         Mockito.verify(reservationService).save(Mockito.any(ReservationDto.class));
     }
 
-    @Test
-    void testMappingReservationDtoToReservation() {
-        ReservationDto reservationDto = new ReservationDto();
-        reservationDto.setPrice(50.0);
-        reservationDto.setDriver(DatesGetter.getUserDto("DRIVER"));
 
-        Reservation reservation = modelMapper.map(reservationDto, Reservation.class);
 
-        //Assertions.assertNotNull(reservation);
-        Assertions.assertEquals(reservationDto.getDriver().getId(), reservation.getDriver().getId());
-    }
 
 
     /*

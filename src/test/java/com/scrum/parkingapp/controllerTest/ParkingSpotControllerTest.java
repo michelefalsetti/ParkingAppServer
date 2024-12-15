@@ -110,7 +110,7 @@ public class ParkingSpotControllerTest {
         ParkingSpaceIdDto parkingSpaceId = new ParkingSpaceIdDto();
         parkingSpaceId.setId(parkingSpaceDto.getId());
 
-        parkingSpotDto.setParkingSpaceId(parkingSpaceId);
+        parkingSpotDto.setParkingSpaceId(1L);
         parkingSpotDto.setNumber("TEST-1");
         parkingSpotDto.setReservations(null);
 
@@ -130,7 +130,7 @@ public class ParkingSpotControllerTest {
 
         UserIdDto owner = new UserIdDto();
         owner.setUserId(loggedUser.getId());
-        parkingSpaceDto.setOwner(owner);
+        parkingSpaceDto.setUserId(owner);
         return parkingSpaceDto;
     }
 

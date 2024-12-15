@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface ReservationDao extends JpaRepository<Reservation, Long> {
 
-    @Query("SELECT r FROM Reservation r WHERE r.driver.id = :userId")
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId")
     List<Reservation> findAllByUserId(UUID userId);
 
     @Query("SELECT r FROM Reservation r")

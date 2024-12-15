@@ -19,6 +19,7 @@ public class LicensePlate {
     private String lpNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DRIVER_ID", nullable = false)
-    private User driver;
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+
 }

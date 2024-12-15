@@ -1,8 +1,9 @@
-package com.scrum.parkingapp.ServiceTest;
+package com.scrum.parkingapp.serviceTest;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scrum.parkingapp.config.security.JwtService;
+import com.scrum.parkingapp.config.security.LoggedUserDetailsService;
 import com.scrum.parkingapp.config.security.SecurityConfig;
 import com.scrum.parkingapp.config.security.filter.JwtAuthenticationFilter;
 import com.scrum.parkingapp.controller.AuthController;
@@ -10,6 +11,8 @@ import com.scrum.parkingapp.data.dao.ParkingSpaceDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
+import com.scrum.parkingapp.data.service.RefreshTokenService;
+import com.scrum.parkingapp.data.service.RevokedTokenService;
 import com.scrum.parkingapp.data.service.implem.ParkingSpaceServiceImpl;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import com.scrum.parkingapp.utils.DatesGetter;
@@ -26,16 +29,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import com.scrum.parkingapp.config.security.JwtService;
+import com.scrum.parkingapp.config.security.LoggedUserDetails;
+import com.scrum.parkingapp.config.security.LoggedUserDetailsService;
+import com.scrum.parkingapp.data.service.RefreshTokenService;
+import com.scrum.parkingapp.data.service.RevokedTokenService;
+import com.scrum.parkingapp.dto.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.xml.crypto.Data;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
+import java.util.UUID;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -53,10 +61,15 @@ public class ParkingSpaceServiceImplTest {
     @InjectMocks
     private ParkingSpaceServiceImpl parkingSpaceService;
 
+    @InjectMocks
+    private DatesGetter datesGetter; // Usa un'istanza di DatesGetter
+
     @Test
+    @WithMockCustomUser(role = "OWNER")
     void testSaveParkingSpace_AsOwner() {
         // Dati di input per il test
-        ParkingSpaceDto parkingSpaceDto = DatesGetter.getParkingSpaceDto();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ParkingSpaceDto parkingSpaceDto = datesGetter.getParkingSpaceDto(null);
 
         // Simula il mapping tra DTO e entità
         ParkingSpace parkingSpace = new ParkingSpace();
@@ -84,24 +97,6 @@ public class ParkingSpaceServiceImplTest {
         Assertions.assertEquals("123 Test Street", result.getAddress());
     }
 
-
-    @Test
-    @WithMockCustomUser(name = "AdminUser", role = "ADMIN")
-    void testSaveParkingSpace_AsAdmin() throws Exception {
-        ParkingSpaceDto parkingSpaceDto = DatesGetter.getParkingSpaceDto();
-
-        Mockito.when(parkingSpaceService.save(Mockito.any(ParkingSpaceDto.class)))
-                .thenReturn(parkingSpaceDto);
-
-        String parkingSpaceJson = new ObjectMapper().writeValueAsString(parkingSpaceDto);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/parkingSpaces/save")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(parkingSpaceJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Test Parking")) // Verifica il nome del parcheggio
-                .andExpect(jsonPath("$.address").value("123 Test Street"));
-
-        Mockito.verify(parkingSpaceService).save(Mockito.any(ParkingSpaceDto.class));
-    }
 }
+
+

@@ -25,7 +25,7 @@ public class ParkingSpotController {
 
     @GetMapping(path= "/getBySpaceId/{idSpace}/{idUser}")
     @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<List<ParkingSpotDto>> getByParkingSpaceId(@PathVariable Long idSpace, @PathVariable Long idUser) {
+    public ResponseEntity<List<ParkingSpotDto>> getByParkingSpaceId(@PathVariable Long idSpace, @PathVariable UUID idUser) {
         List<ParkingSpotDto> parkingSpotsDto = parkingSpotService.getByParkingSpaceId(idSpace);
         if (parkingSpotsDto == null || parkingSpotsDto.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.data.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,12 @@ public class Reservation {
     @Column(name = "ID")
     private Long id;
 
-    @OneToOne(optional = false)
+    @OneToOne
     @JoinColumn(
-            name = "DRIVER_ID",
+            name = "USER_ID",
             referencedColumnName = "ID"
     )
-    private User driver;
+    private User user;
 
     @Column(name = "PRICE", nullable = false)
     private Double price;
@@ -34,11 +35,11 @@ public class Reservation {
             name = "PARKING_SPOT_ID",
             referencedColumnName = "ID"
     )
+    @JsonBackReference
     private ParkingSpot parkingSpot;
 
-
-
-    @OneToOne(optional = false)//da cambiare?
+    @OneToOne
+    @JoinColumn(name = "LICENSE_PLATE_ID", referencedColumnName = "ID", nullable = true)
     private LicensePlate licensePlate;
 
 

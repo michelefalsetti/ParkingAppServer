@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.data.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,9 +31,12 @@ public class ParkingSpot {
     @JoinColumn(
             name = "PARKING_SPACE_ID"
     )
+    @JsonBackReference
     private ParkingSpace parkingspaceId;
 
     @OneToMany
     private List<Reservation> reservations = new ArrayList<>();
 
+    @Column(name = "FREE", nullable = false)
+    private boolean free;
 }

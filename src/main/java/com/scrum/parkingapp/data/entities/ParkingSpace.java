@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.data.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,9 +21,10 @@ public class ParkingSpace {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User owner;
+    private User user;
 
     @OneToMany(mappedBy = "parkingspaceId", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ParkingSpot> parkingSpots = new ArrayList<>();
 
     @Column(name = "NAME", nullable = false)

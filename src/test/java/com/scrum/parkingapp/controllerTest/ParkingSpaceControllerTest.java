@@ -111,7 +111,7 @@ public class ParkingSpaceControllerTest {
 
         UserIdDto owner = new UserIdDto();
         owner.setUserId(loggedUser.getId());
-        parkingSpaceDto.setOwner(owner);
+        parkingSpaceDto.setUserId(owner);
         return parkingSpaceDto;
     }
 

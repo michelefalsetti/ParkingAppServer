@@ -1,8 +1,13 @@
 package com.scrum.parkingapp.data.service.implem;
 
+import com.scrum.parkingapp.data.dao.LicensePlateDao;
 import com.scrum.parkingapp.data.dao.ParkingSpotDao;
 import com.scrum.parkingapp.data.dao.ReservationDao;
+import com.scrum.parkingapp.data.dao.UsersDao;
+import com.scrum.parkingapp.data.entities.LicensePlate;
+import com.scrum.parkingapp.data.entities.ParkingSpot;
 import com.scrum.parkingapp.data.entities.Reservation;
+import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.data.service.ReservationService;
 import com.scrum.parkingapp.dto.ReservationDto;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +26,8 @@ import java.util.UUID;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationDao reservationDao;
+    private  final LicensePlateDao licensePlateDao;
+    private final UsersDao usersDao;
     private final ParkingSpotDao parkingSpotDao;
     private final ModelMapper modelMapper;
 
@@ -35,11 +42,39 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationDto save(ReservationDto reservationDto) {
         System.out.println("ReservationDto: " + reservationDto);
-        Reservation reservation = modelMapper.map(reservationDto, Reservation.class);
 
-        Reservation r = reservationDao.save(reservation);
-        return modelMapper.map(r, ReservationDto.class);
+        // Crea una nuova Reservation
+        Reservation reservation = new Reservation();
+
+        // Trova la LicensePlate associata
+        Long lpId = reservationDto.getLicensePlateId();
+        LicensePlate licensePlate = licensePlateDao.findById(lpId).orElseThrow(
+                () -> new IllegalArgumentException("Invalid license plate ID"));
+
+        // Trova l'User associato
+        User user = usersDao.findById(reservationDto.getUser().getId()).orElseThrow(
+                () -> new IllegalArgumentException("Invalid user ID"));
+
+        // Trova il ParkingSpot associato
+        ParkingSpot parkingSpot = parkingSpotDao.findById(reservationDto.getParkingSpotId()).orElseThrow(
+                () -> new IllegalArgumentException("Invalid parking spot ID"));
+
+        // Imposta i valori nella Reservation
+        reservation.setLicensePlate(licensePlate);
+        reservation.setUser(user);
+        reservation.setParkingSpot(parkingSpot);
+        reservation.setStartDate(reservationDto.getStartDate());
+        reservation.setEndDate(reservationDto.getEndDate());
+        reservation.setPrice(reservationDto.getPrice());
+
+        // Salva la Reservation
+        Reservation savedReservation = reservationDao.save(reservation);
+
+        // Mappa la Reservation salvata a ReservationDto e restituisci
+        return modelMapper.map(savedReservation, ReservationDto.class);
     }
+
+
 
     @Override
     public ReservationDto deleteById(Long id) {
