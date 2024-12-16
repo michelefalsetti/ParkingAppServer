@@ -4,6 +4,7 @@ import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.data.service.ReservationService;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import com.scrum.parkingapp.dto.ReservationDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,7 @@ public class ReservationController {
 
     @PostMapping(path= "/add/{idUser}")
     @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser, @RequestBody ReservationDto reservationDto) {
+    public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser, @Valid @RequestBody ReservationDto reservationDto) {
         System.out.println("pre add reservation");
         log.info("Received DTO: {}", reservationDto);
         ReservationDto rDto = reservationService.save(reservationDto);

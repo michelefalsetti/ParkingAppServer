@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,26 +42,42 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public ReservationDto save(ReservationDto reservationDto) {
         System.out.println("ReservationDto: " + reservationDto);
 
-        // Crea una nuova Reservation
-        Reservation reservation = new Reservation();
+        // Recupera l'User associato
+        User user = usersDao.findById(reservationDto.getUser().getId()).orElseThrow(
+                () -> new IllegalArgumentException("Invalid user ID"));
+
+        // Se l'utente ha una vecchia Reservation, rimuovila
+        if (user.getReservation() != null) {
+            Reservation oldReservation = user.getReservation();
+            ParkingSpot oldParkingSpot = oldReservation.getParkingSpot();
+
+            // Rimuovi la vecchia Reservation dalla lista nel ParkingSpot
+            if (oldParkingSpot != null) {
+                oldParkingSpot.getReservations().remove(oldReservation);
+                parkingSpotDao.save(oldParkingSpot);
+            }
+
+            // Rimuovi la relazione bidirezionale
+            user.setReservation(null);
+            reservationDao.delete(oldReservation);
+            reservationDao.flush();
+        }
 
         // Trova la LicensePlate associata
         Long lpId = reservationDto.getLicensePlateId();
         LicensePlate licensePlate = licensePlateDao.findById(lpId).orElseThrow(
                 () -> new IllegalArgumentException("Invalid license plate ID"));
 
-        // Trova l'User associato
-        User user = usersDao.findById(reservationDto.getUser().getId()).orElseThrow(
-                () -> new IllegalArgumentException("Invalid user ID"));
-
         // Trova il ParkingSpot associato
         ParkingSpot parkingSpot = parkingSpotDao.findById(reservationDto.getParkingSpotId()).orElseThrow(
                 () -> new IllegalArgumentException("Invalid parking spot ID"));
 
-        // Imposta i valori nella Reservation
+        // Crea la nuova Reservation
+        Reservation reservation = new Reservation();
         reservation.setLicensePlate(licensePlate);
         reservation.setUser(user);
         reservation.setParkingSpot(parkingSpot);
@@ -67,12 +85,31 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setEndDate(reservationDto.getEndDate());
         reservation.setPrice(reservationDto.getPrice());
 
-        // Salva la Reservation
+        // Validazioni aggiuntive
+        if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
+            throw new IllegalArgumentException("Invalid date range");
+        }
+
+        // Aggiorna la disponibilità del ParkingSpot
+        parkingSpot.getReservations().add(reservation);
+        if (reservation.getStartDate().isBefore(LocalDateTime.now()) && reservation.getEndDate().isAfter(LocalDateTime.now())) {
+            parkingSpot.setFree(false);
+        }
+
+        // Salva la nuova Reservation
         Reservation savedReservation = reservationDao.save(reservation);
 
-        // Mappa la Reservation salvata a ReservationDto e restituisci
+        // Aggiorna la relazione bidirezionale con l'utente
+        user.setReservation(savedReservation);
+        usersDao.save(user);
+
+        // Salva l'aggiornamento del ParkingSpot
+        parkingSpotDao.save(parkingSpot);
+
+        // Restituisci il DTO
         return modelMapper.map(savedReservation, ReservationDto.class);
     }
+
 
 
 

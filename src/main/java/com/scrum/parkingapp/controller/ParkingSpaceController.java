@@ -45,7 +45,7 @@ public class ParkingSpaceController {
     }
 
     @PostMapping(path= "/add")
-    @PreAuthorize("#parkingSpaceDto.getUserId().userId()  == authentication.principal.getId() or hasRole('ADMIN')")
+    @PreAuthorize("#parkingSpaceDto.getUserId().getUserId() == authentication.principal.getId() or hasRole('ADMIN')")
     public ResponseEntity<ParkingSpaceDto> addParkingSpace(@Valid @RequestBody ParkingSpaceDto parkingSpaceDto) {
         System.out.println("pre add");
         ParkingSpaceDto psDto = parkingSpaceService.save(parkingSpaceDto);
