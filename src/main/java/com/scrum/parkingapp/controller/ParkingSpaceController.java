@@ -2,6 +2,7 @@ package com.scrum.parkingapp.controller;
 
 
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
+import com.scrum.parkingapp.dto.LicensePlateDto;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,20 @@ public class ParkingSpaceController {
 
 
     @GetMapping(path= "/getAll")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ParkingSpaceDto>> getAll() {
         List<ParkingSpaceDto> parkingSpacesDto = parkingSpaceService.getAllDto();
         if (parkingSpacesDto == null || parkingSpacesDto.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(parkingSpacesDto, HttpStatus.OK);
+    }
+
+    @GetMapping(path= "/getById/{id}")
+    public ResponseEntity<ParkingSpaceDto> getById(@PathVariable Long id) {
+        ParkingSpaceDto parkingSpaceDto = parkingSpaceService.getById(id);
+        if (parkingSpaceDto == null)
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(parkingSpaceDto, HttpStatus.OK);
     }
 
 
@@ -42,6 +51,16 @@ public class ParkingSpaceController {
         if (parkingSpacesDto == null || parkingSpacesDto.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(parkingSpacesDto, HttpStatus.OK);
+    }
+
+    @GetMapping(path= "/getLicensePlates/{idUser}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<LicensePlateDto>> getLicensePlates(@PathVariable UUID idUser) {
+        List<LicensePlateDto> licensePlatesDto = parkingSpaceService.getLicensePlates(idUser);
+
+        if (licensePlatesDto == null || licensePlatesDto.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(licensePlatesDto, HttpStatus.OK);
     }
 
     @PostMapping(path= "/add")

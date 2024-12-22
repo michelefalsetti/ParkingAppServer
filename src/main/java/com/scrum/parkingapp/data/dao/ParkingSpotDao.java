@@ -14,6 +14,9 @@ public interface ParkingSpotDao extends JpaRepository<ParkingSpot, Long> {
 
     List<ParkingSpot> findAllById(Long id);
 
+    @Query("SELECT p FROM ParkingSpot p WHERE p.parkingspaceId.id = :id")
+    List<ParkingSpot> findAllByParkingspaceId(Long id);
+
 
 
 }

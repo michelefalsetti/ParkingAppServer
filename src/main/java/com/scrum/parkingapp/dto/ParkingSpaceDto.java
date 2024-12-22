@@ -19,10 +19,7 @@ public class ParkingSpaceDto {
 
     private String name;
 
-    private String address;
-
-    private String city;
-
+    private AddressDto address;
 
 
 }

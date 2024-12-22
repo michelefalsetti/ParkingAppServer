@@ -37,9 +37,10 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
 
     @Override
     public List<ParkingSpotDto> getByParkingSpaceId(Long parkingSpaceId) {
-        return parkingSpotDao.findAllById(parkingSpaceId).stream()
+        return parkingSpotDao.findAllByParkingspaceId(parkingSpaceId)
+                .stream()
                 .map(parkingSpot -> modelMapper.map(parkingSpot, ParkingSpotDto.class))
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
 
     }
 }

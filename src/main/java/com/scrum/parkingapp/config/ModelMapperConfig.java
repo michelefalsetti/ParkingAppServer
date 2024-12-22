@@ -96,6 +96,31 @@ public class ModelMapperConfig {
             }
         });
 
+        modelMapper.addMappings(new PropertyMap<AddressDto, Address>() {
+            @Override
+            protected void configure() {
+                map(source.getId(), destination.getId());
+                map(source.getCity(), destination.getCity());
+                map(source.getStreet(), destination.getStreet());
+                map(source.getLatitude(), destination.getLatitude());
+                map(source.getLongitude(), destination.getLongitude());
+
+            }
+        });
+
+        /*
+        modelMapper.addMappings(new PropertyMap<ParkingSpaceDto, ParkingSpace>() {
+            @Override
+            protected void configure() {
+                map(source.getId(), destination.getId());
+                map(source.getUserId().getUserId(), destination.getUser().getId());
+                map(source.getAddressDto(), destination.getAddress());
+                map(source.getName(), destination.getName());
+                map(source.getParkingSpots(), destination.getParkingSpots());
+
+            }
+        });*/
+
 
 
         return modelMapper;

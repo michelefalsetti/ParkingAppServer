@@ -30,9 +30,8 @@ public class ParkingSpace {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "ADDRESS", nullable = false)
-    private String address;
+    @JoinColumn(name = "ADDRESS_ID")
+    @ManyToOne (fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    private Address address;
 
-    @Column(name = "CITY", nullable = false)
-    private String city;
 }

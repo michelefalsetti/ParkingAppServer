@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.catalina.LifecycleState;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class ParkingSpot {
     @OneToMany
     private List<Reservation> reservations = new ArrayList<>();
 
-    @Column(name = "FREE", nullable = false)
-    private boolean free;
+    @Column(name = "BASE_PRICE", nullable = false)
+    private Double basePrice;
+
 }

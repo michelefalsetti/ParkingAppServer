@@ -92,8 +92,10 @@ public class ReservationServiceImpl implements ReservationService {
 
         // Aggiorna la disponibilità del ParkingSpot
         parkingSpot.getReservations().add(reservation);
-        if (reservation.getStartDate().isBefore(LocalDateTime.now()) && reservation.getEndDate().isAfter(LocalDateTime.now())) {
-            parkingSpot.setFree(false);
+        if (! (reservation.getStartDate().isBefore(LocalDateTime.now()) &&
+                                reservation.getEndDate().isAfter(LocalDateTime.now()))
+        ) {
+            throw new IllegalArgumentException("Invalid date range");
         }
 
         // Salva la nuova Reservation

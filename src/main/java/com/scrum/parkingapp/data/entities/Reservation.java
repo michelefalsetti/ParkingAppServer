@@ -43,7 +43,6 @@ public class Reservation {
     private LicensePlate licensePlate;
 
 
-
     @Column(name = "START_DATE", nullable = false)
     private LocalDateTime startDate;
 

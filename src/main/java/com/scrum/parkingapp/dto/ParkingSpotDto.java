@@ -17,4 +17,6 @@ public class ParkingSpotDto {
     private Long parkingSpaceId;
 
     private List<ReservationDto> reservations = new ArrayList<>();
+
+    private Double basePrice;
 }
