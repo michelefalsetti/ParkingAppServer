@@ -25,7 +25,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping(path= "/getAll")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReservationDto>> getAll() {
         List<ReservationDto> reservationsDto = reservationService.getAllReservation();
         if (reservationsDto == null || reservationsDto.isEmpty())
@@ -53,17 +53,27 @@ public class ReservationController {
         return new ResponseEntity<>(reservationsDto, HttpStatus.OK);
     }
 
-    @PostMapping(path= "/add/{idUser}")
-    @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<ReservationDto> addReservation(@PathVariable
-                                                             UUID idUser, @Valid @RequestBody ReservationDto reservationDto) {
-        System.out.println("pre add reservation");
-        log.info("Received DTO: {}", reservationDto);
-        ReservationDto rDto = reservationService.save(reservationDto);
-        if (rDto == null)
+    @PutMapping(path = "/add/{idUser}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser,  @RequestBody ReservationDto reservationDto) {
+        log.info("User ID from path: {}", idUser);
+        log.info("DTO received: {}", reservationDto);
+
+        if (!idUser.equals(reservationDto.getUser().getId())) {
+            log.error("Mismatch between path user ID and body user ID");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(rDto, HttpStatus.OK);
+        }
+
+        try {
+            ReservationDto rDto = reservationService.save(reservationDto);
+            log.info("Reservation saved: {}", rDto);
+            return new ResponseEntity<>(rDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error during reservation processing", e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
+
 
 
 

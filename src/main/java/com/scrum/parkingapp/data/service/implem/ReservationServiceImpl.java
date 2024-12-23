@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,27 +45,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public ReservationDto save(ReservationDto reservationDto) {
-        System.out.println("ReservationDto: " + reservationDto);
+        log.info("ReservationServiceImpl", "save", "reservationDto: " + reservationDto);
 
         // Recupera l'User associato
         User user = usersDao.findById(reservationDto.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("Invalid user ID"));
 
-        // Se l'utente ha una vecchia Reservation, rimuovila
-        if (user.getReservation() != null) {
-            Reservation oldReservation = user.getReservation();
-            ParkingSpot oldParkingSpot = oldReservation.getParkingSpot();
-
-            // Rimuovi la vecchia Reservation dalla lista nel ParkingSpot
-            if (oldParkingSpot != null) {
-                oldParkingSpot.getReservations().remove(oldReservation);
-                parkingSpotDao.save(oldParkingSpot);
-            }
-
-            // Rimuovi la relazione bidirezionale
-            user.setReservation(null);
-            reservationDao.delete(oldReservation);
-            reservationDao.flush();
+        // Rimuovi la vecchia Reservation
+        if (user.getReservations() == null) {
+            user.setReservations(new ArrayList<>());
+            usersDao.save(user);
         }
 
         // Trova la LicensePlate associata
@@ -87,22 +77,17 @@ public class ReservationServiceImpl implements ReservationService {
 
         // Validazioni aggiuntive
         if (reservation.getStartDate().isAfter(reservation.getEndDate())) {
-            throw new IllegalArgumentException("Invalid date range");
+            throw new IllegalArgumentException("Start date must be before end date");
         }
 
         // Aggiorna la disponibilità del ParkingSpot
         parkingSpot.getReservations().add(reservation);
-        if (! (reservation.getStartDate().isBefore(LocalDateTime.now()) &&
-                                reservation.getEndDate().isAfter(LocalDateTime.now()))
-        ) {
-            throw new IllegalArgumentException("Invalid date range");
-        }
 
         // Salva la nuova Reservation
         Reservation savedReservation = reservationDao.save(reservation);
 
         // Aggiorna la relazione bidirezionale con l'utente
-        user.setReservation(savedReservation);
+        user.getReservations().add(savedReservation);
         usersDao.save(user);
 
         // Salva l'aggiornamento del ParkingSpot

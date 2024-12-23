@@ -7,10 +7,10 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = BirthDateValidator.class)
+@Constraint(validatedBy = ReservationDateValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidReservDate {
+public @interface ValidReservationDate {
 
     String message() default "Reservation Date must be between today and 6 weeks from today";
     Class<?>[] groups() default {};

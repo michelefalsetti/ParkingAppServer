@@ -1,5 +1,6 @@
 package com.scrum.parkingapp.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -36,8 +37,9 @@ public class User {
     private LocalDate birthDate;
 
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Reservation reservation;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     //@JoinColumn(name = "DRIVER_ID")

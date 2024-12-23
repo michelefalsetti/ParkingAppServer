@@ -19,11 +19,12 @@ public class Reservation {
     @Column(name = "ID")
     private Long id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "USER_ID",
-            referencedColumnName = "ID"
+            referencedColumnName = "ID" //
     )
+    @JsonBackReference //serve per evitare il loop infinito
     private User user;
 
     @Column(name = "PRICE", nullable = false)
@@ -35,7 +36,7 @@ public class Reservation {
             name = "PARKING_SPOT_ID",
             referencedColumnName = "ID"
     )
-    @JsonBackReference
+    @JsonBackReference //serve per evitare il loop infinito
     private ParkingSpot parkingSpot;
 
     @OneToOne
