@@ -9,18 +9,15 @@ import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.entities.ParkingSpot;
 import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
-import com.scrum.parkingapp.dto.AddressDto;
-import com.scrum.parkingapp.dto.LicensePlateDto;
-import com.scrum.parkingapp.dto.ParkingSpaceDto;
-import com.scrum.parkingapp.dto.UserDto;
+import com.scrum.parkingapp.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +42,36 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
                 .map(parkingSpace -> modelMapper.map(parkingSpace, ParkingSpaceDto.class))
                 .orElse(null);
     }
+
+
+    @Override
+    public List<ParkingSpaceDto> findAllByCityAndStartDateAndEndDate(String city, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = parkingSpaceDao.findParkingSpacesAndAvailableSpots(city, startDate, endDate);
+
+        Map<ParkingSpace, List<ParkingSpot>> spaceToSpots = new HashMap<>();
+
+        for (Object[] result : results) {
+            ParkingSpace space = (ParkingSpace) result[0];
+            ParkingSpot spot = (ParkingSpot) result[1];
+
+            /*
+            System.out.println("Space: " + space.toString());
+            System.out.println("Spot: " + spot.toString());*/
+
+            spaceToSpots.computeIfAbsent(space, k -> new ArrayList<>()).add(spot);
+        }
+
+        return spaceToSpots.entrySet().stream()
+                .map(entry -> toParkingSpaceDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private ParkingSpaceDto toParkingSpaceDto(ParkingSpace space, List<ParkingSpot> spots) {
+        ParkingSpaceDto dto = modelMapper.map(space, ParkingSpaceDto.class);
+        dto.setParkingSpots(spots.stream().map(spot -> modelMapper.map(spot, ParkingSpotDto.class)).toList());
+        return dto;
+    }
+
 
     @Override
     @Transactional
@@ -94,6 +121,8 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
                 .map(parkingSpace -> modelMapper.map(parkingSpace, ParkingSpaceDto.class))
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public List<ParkingSpaceDto> getAllByOwnerId(UUID ownerId) {

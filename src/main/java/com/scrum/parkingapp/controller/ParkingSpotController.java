@@ -2,6 +2,7 @@ package com.scrum.parkingapp.controller;
 
 
 import com.scrum.parkingapp.data.service.ParkingSpotService;
+import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import com.scrum.parkingapp.dto.ParkingSpotDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,7 @@ public class ParkingSpotController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(parkingSpotsDto, HttpStatus.OK);
     }
+
 
     @PostMapping(path= "/add/{idUser}")
     @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")

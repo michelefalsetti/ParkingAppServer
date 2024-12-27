@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +25,11 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
         return parkingSpotDao.findById(id)
                 .map(parkingSpot -> modelMapper.map(parkingSpot, ParkingSpotDto.class))
                 .orElse(null);
+    }
+
+    @Override
+    public List<ParkingSpotDto> findAllByCityAndStartDateAndEndDate(String city, LocalDateTime parsedStartDate, LocalDateTime parsedEndDate) {
+        return List.of();
     }
 
     @Override
@@ -43,4 +49,6 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
                 .toList();
 
     }
+
+
 }

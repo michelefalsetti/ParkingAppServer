@@ -18,5 +18,4 @@ public interface ParkingSpotDao extends JpaRepository<ParkingSpot, Long> {
     List<ParkingSpot> findAllByParkingspaceId(Long id);
 
 
-
 }

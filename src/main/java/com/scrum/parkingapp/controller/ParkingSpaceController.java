@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,11 +36,24 @@ public class ParkingSpaceController {
     }
 
     @GetMapping(path= "/getById/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ParkingSpaceDto> getById(@PathVariable Long id) {
         ParkingSpaceDto parkingSpaceDto = parkingSpaceService.getById(id);
         if (parkingSpaceDto == null)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(parkingSpaceDto, HttpStatus.OK);
+    }
+
+    @GetMapping(path= "/getBySearch/{city}/{startDate}/{endDate}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ParkingSpaceDto>> getBySearch(@PathVariable String city, @PathVariable String startDate, @PathVariable String endDate) {
+        LocalDateTime parsedStartDate = LocalDateTime.parse(startDate);
+        LocalDateTime parsedEndDate = LocalDateTime.parse(endDate);
+
+        List<ParkingSpaceDto> parkingSpacesDto = parkingSpaceService.findAllByCityAndStartDateAndEndDate(city, parsedStartDate, parsedEndDate);
+        if (parkingSpacesDto == null || parkingSpacesDto.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(parkingSpacesDto, HttpStatus.OK);
     }
 
 
