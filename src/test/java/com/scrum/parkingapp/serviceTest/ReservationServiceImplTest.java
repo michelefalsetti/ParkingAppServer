@@ -2,18 +2,13 @@ package com.scrum.parkingapp.serviceTest;
 
 
 import com.scrum.parkingapp.config.security.JwtService;
-import com.scrum.parkingapp.config.security.LoggedUserDetails;
 import com.scrum.parkingapp.data.dao.ReservationDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
-import com.scrum.parkingapp.data.entities.LicensePlate;
-import com.scrum.parkingapp.data.entities.ParkingSpot;
 import com.scrum.parkingapp.data.entities.Reservation;
 import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.data.service.implem.ReservationServiceImpl;
-import com.scrum.parkingapp.dto.LicensePlateIdDto;
 import com.scrum.parkingapp.dto.ReservationDto;
 import com.scrum.parkingapp.dto.UserDto;
-import com.scrum.parkingapp.dto.UserIdDto;
 import com.scrum.parkingapp.utils.DatesGetter;
 import com.scrum.parkingapp.utils.WithMockCustomUser;
 import org.junit.jupiter.api.Assertions;
@@ -24,12 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)

@@ -73,13 +73,6 @@ public class ModelMapperConfig {
         });
 
 
-        modelMapper.addMappings(new PropertyMap<LicensePlateDto, LicensePlate>() {
-            @Override
-            protected void configure() {
-                map(source.getId(), destination.getId());
-                map(source.getLpNumber(), destination.getLpNumber());
-            }
-        });
 
 
         modelMapper.addMappings(new PropertyMap<ReservationDto, Reservation>() {
@@ -88,7 +81,7 @@ public class ModelMapperConfig {
                 map(source.getId(), destination.getId());
                 map(source.getPrice(), destination.getPrice());
                 map(source.getUser(), destination.getUser());
-                map(source.getLicensePlateId(), destination.getLicensePlate());
+                map(source.getLicensePlate(), destination.getLicencePlate());
                 //map(source.getParkingSpotId(), destination.getParkingSpot());
                 map(source.getStartDate(), destination.getStartDate());
                 map(source.getEndDate(), destination.getEndDate());

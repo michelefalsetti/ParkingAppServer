@@ -23,8 +23,8 @@ public class ReservationDto {
     @NotNull(message = "ParkingSpot ID is required")
     private Long parkingSpotId;
 
-    @NotNull(message = "LicensePlate ID is required")
-    private Long licensePlateId;
+    @NotNull(message = "LicensePlate is required")
+    private String licensePlate;
 
     @ValidReservationDate //ho appena messo il valid, se fallisce l'add e' per colpa sua
     private LocalDateTime startDate;

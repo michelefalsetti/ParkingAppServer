@@ -2,7 +2,6 @@ package com.scrum.parkingapp.controller;
 
 
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
-import com.scrum.parkingapp.dto.LicensePlateDto;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -67,15 +66,6 @@ public class ParkingSpaceController {
         return new ResponseEntity<>(parkingSpacesDto, HttpStatus.OK);
     }
 
-    @GetMapping(path= "/getLicensePlates/{idUser}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<LicensePlateDto>> getLicensePlates(@PathVariable UUID idUser) {
-        List<LicensePlateDto> licensePlatesDto = parkingSpaceService.getLicensePlates(idUser);
-
-        if (licensePlatesDto == null || licensePlatesDto.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(licensePlatesDto, HttpStatus.OK);
-    }
 
     @PostMapping(path= "/add")
     @PreAuthorize("#parkingSpaceDto.getUserId().getUserId() == authentication.principal.getId() or hasRole('ADMIN')")

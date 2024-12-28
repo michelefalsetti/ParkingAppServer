@@ -41,9 +41,6 @@ public class User {
     @JsonBackReference
     private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    //@JoinColumn(name = "DRIVER_ID")
-    private List<LicensePlate> licensePlates = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PaymentMethod> paymentMethods;

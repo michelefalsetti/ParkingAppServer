@@ -27,10 +27,6 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
                 .orElse(null);
     }
 
-    @Override
-    public List<ParkingSpotDto> findAllByCityAndStartDateAndEndDate(String city, LocalDateTime parsedStartDate, LocalDateTime parsedEndDate) {
-        return List.of();
-    }
 
     @Override
     public ParkingSpotDto save(ParkingSpotDto parkingSpotDto) {

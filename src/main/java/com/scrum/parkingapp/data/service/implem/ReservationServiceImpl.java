@@ -1,10 +1,8 @@
 package com.scrum.parkingapp.data.service.implem;
 
-import com.scrum.parkingapp.data.dao.LicensePlateDao;
 import com.scrum.parkingapp.data.dao.ParkingSpotDao;
 import com.scrum.parkingapp.data.dao.ReservationDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
-import com.scrum.parkingapp.data.entities.LicensePlate;
 import com.scrum.parkingapp.data.entities.ParkingSpot;
 import com.scrum.parkingapp.data.entities.Reservation;
 import com.scrum.parkingapp.data.entities.User;
@@ -16,10 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -29,7 +25,6 @@ import java.util.UUID;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationDao reservationDao;
-    private  final LicensePlateDao licensePlateDao;
     private final UsersDao usersDao;
     private final ParkingSpotDao parkingSpotDao;
     private final ModelMapper modelMapper;
@@ -58,17 +53,13 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         // Trova la LicensePlate associata
-        Long lpId = reservationDto.getLicensePlateId();
-        LicensePlate licensePlate = licensePlateDao.findById(lpId).orElseThrow(
-                () -> new IllegalArgumentException("Invalid license plate ID"));
-
         // Trova il ParkingSpot associato
         ParkingSpot parkingSpot = parkingSpotDao.findById(reservationDto.getParkingSpotId()).orElseThrow(
                 () -> new IllegalArgumentException("Invalid parking spot ID"));
 
         // Crea la nuova Reservation
         Reservation reservation = new Reservation();
-        reservation.setLicensePlate(licensePlate);
+        reservation.setLicencePlate(reservationDto.getLicensePlate());
         reservation.setUser(user);
         reservation.setParkingSpot(parkingSpot);
         reservation.setStartDate(reservationDto.getStartDate());

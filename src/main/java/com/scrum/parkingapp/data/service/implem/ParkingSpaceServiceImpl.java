@@ -1,13 +1,11 @@
 package com.scrum.parkingapp.data.service.implem;
 
 import com.scrum.parkingapp.data.dao.AddressDao;
-import com.scrum.parkingapp.data.dao.LicensePlateDao;
 import com.scrum.parkingapp.data.dao.ParkingSpaceDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
 import com.scrum.parkingapp.data.entities.Address;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.entities.ParkingSpot;
-import com.scrum.parkingapp.data.entities.User;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.dto.*;
 import jakarta.transaction.Transactional;
@@ -31,7 +29,6 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
 
     private final AddressDao addressDao;
 
-    private final LicensePlateDao licensePlateDao;
 
     private final ModelMapper modelMapper;
 
@@ -131,12 +128,6 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<LicensePlateDto> getLicensePlates(UUID idUser) {
-        return licensePlateDao.findAllByUserId(idUser).stream()
-                .map(licensePlate -> modelMapper.map(licensePlate, LicensePlateDto.class))
-                .collect(Collectors.toList());
-    }
 
 
 }
