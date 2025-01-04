@@ -1,5 +1,6 @@
 package com.scrum.parkingapp;
 
+import com.scrum.parkingapp.controllerTest.AuthControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -17,6 +18,8 @@ class ParkingSpaceAppServerApplicationTests {
 
 	@Test
 	void contextLoads() {
+
+		AuthControllerTest.class.getName();
 
 	}
 

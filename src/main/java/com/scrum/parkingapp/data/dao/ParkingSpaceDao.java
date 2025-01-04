@@ -1,9 +1,6 @@
 package com.scrum.parkingapp.data.dao;
 
-import com.scrum.parkingapp.data.entities.ParkingSpace;
-import com.scrum.parkingapp.data.entities.ParkingSpot;
-import com.scrum.parkingapp.data.entities.PaymentMethod;
-import com.scrum.parkingapp.data.entities.Reservation;
+import com.scrum.parkingapp.data.entities.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,12 +17,16 @@ public interface ParkingSpaceDao extends JpaRepository<ParkingSpace,  Long> {
     List<ParkingSpace> findAllByUserId(UUID userId);
 
     @Query("""
-    SELECT distinct ps, sp
-    FROM ParkingSpace ps
-    JOIN ps.parkingSpots sp
-    LEFT JOIN sp.reservations r
-    WHERE ps.address.city = :city
-      AND (r.id IS NULL OR (r.endDate < :startDate OR r.startDate > :endDate))
+        SELECT DISTINCT ps, sp
+        FROM ParkingSpace ps
+        JOIN ps.parkingSpots sp
+        LEFT JOIN sp.reservations r
+        JOIN ps.address a
+            WHERE a.city = :city
+                AND (r.id IS NULL OR (
+                    :startDate > r.endDate AND
+                    :endDate < r.startDate
+                ))
     """)
     List<Object[]> findParkingSpacesAndAvailableSpots(
             @Param("city") String city,
@@ -34,6 +35,8 @@ public interface ParkingSpaceDao extends JpaRepository<ParkingSpace,  Long> {
 
 
 
+    @Query("SELECT a FROM Address a")
+    List<Address> findAllAddresses();
 
     @Query("SELECT ps FROM ParkingSpace ps")
     List<ParkingSpace> findAllParkingSpace();

@@ -115,24 +115,8 @@ public class ParkingSpotControllerTest {
         parkingSpotDto.setReservations(null);
 
         return parkingSpotDto;
-
     }
 
-    private static ParkingSpaceDto getParkingSpaceDto() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
-
-        ParkingSpaceDto parkingSpaceDto = new ParkingSpaceDto();
-        parkingSpaceDto.setId(1L);
-        parkingSpaceDto.setName("Test Parking");
-        parkingSpaceDto.setAddress("123 Test Street");
-        parkingSpaceDto.setCity("Test City");
-
-        UserIdDto owner = new UserIdDto();
-        owner.setUserId(loggedUser.getId());
-        parkingSpaceDto.setUserId(owner);
-        return parkingSpaceDto;
-    }
 
     /*
     @Test

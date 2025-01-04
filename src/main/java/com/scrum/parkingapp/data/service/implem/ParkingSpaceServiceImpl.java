@@ -128,6 +128,12 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<AddressDto> getAllAddresses() {
+        return parkingSpaceDao.findAllAddresses().stream()
+                .map(address -> modelMapper.map(address, AddressDto.class))
+                .collect(Collectors.toList());
+    }
 
 
 }

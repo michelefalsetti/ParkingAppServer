@@ -101,18 +101,18 @@ public class ModelMapperConfig {
             }
         });
 
-        /*
+
         modelMapper.addMappings(new PropertyMap<ParkingSpaceDto, ParkingSpace>() {
             @Override
             protected void configure() {
                 map(source.getId(), destination.getId());
                 map(source.getUserId().getUserId(), destination.getUser().getId());
-                map(source.getAddressDto(), destination.getAddress());
+                map(source.getAddress(), destination.getAddress());
                 map(source.getName(), destination.getName());
                 map(source.getParkingSpots(), destination.getParkingSpots());
 
             }
-        });*/
+        });
 
 
 

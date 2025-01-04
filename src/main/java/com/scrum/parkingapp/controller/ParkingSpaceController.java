@@ -1,7 +1,9 @@
 package com.scrum.parkingapp.controller;
 
 
+import com.scrum.parkingapp.data.entities.Address;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
+import com.scrum.parkingapp.dto.AddressDto;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,9 @@ public class ParkingSpaceController {
 
     @GetMapping(path= "/getBySearch/{city}/{startDate}/{endDate}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<ParkingSpaceDto>> getBySearch(@PathVariable String city, @PathVariable String startDate, @PathVariable String endDate) {
+    public ResponseEntity<List<ParkingSpaceDto>> getBySearch(@PathVariable String city,@PathVariable
+    String startDate,@PathVariable String endDate) {
+
         LocalDateTime parsedStartDate = LocalDateTime.parse(startDate);
         LocalDateTime parsedEndDate = LocalDateTime.parse(endDate);
 
@@ -76,6 +80,24 @@ public class ParkingSpaceController {
         if (psDto == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(psDto, HttpStatus.OK);
+    }
+    /*
+    @GetMapping(path= "/delete/{id}")
+    @PreAuthorize("#id == authentication.principal.getId() or hasRole('ADMIN')")
+    public ResponseEntity<ParkingSpaceDto> deleteParkingSpace(@PathVariable Long id) {
+        ParkingSpaceDto psDto = parkingSpaceService.deleteById(id);
+        if (psDto == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(psDto, HttpStatus.OK);
+    }*/
+
+    @GetMapping(path= "/getAllAddresses")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<AddressDto>> getAllAddresses() {
+        List<AddressDto> addressesDto = parkingSpaceService.getAllAddresses();
+        if (addressesDto == null || addressesDto.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(addressesDto, HttpStatus.OK);
     }
 
 

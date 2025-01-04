@@ -1,5 +1,7 @@
 package com.scrum.parkingapp.data.service;
 
+import com.scrum.parkingapp.data.entities.Address;
+import com.scrum.parkingapp.dto.AddressDto;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,7 @@ public interface ParkingSpaceService {
 
     List<ParkingSpaceDto> getAllByOwnerId(UUID ownerId);
 
+    List<AddressDto> getAllAddresses();
 
 
 }

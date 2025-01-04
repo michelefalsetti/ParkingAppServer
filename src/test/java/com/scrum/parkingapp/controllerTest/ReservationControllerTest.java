@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -77,7 +78,14 @@ public class ReservationControllerTest {
     @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
     void testAddReservation_Driver() throws Exception {
         DatesGetter datesGetter = new DatesGetter();
-        ReservationDto reservationDto = datesGetter.getReservationDto(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+
+        ReservationDto reservationDto = datesGetter.getReservationDto(authentication);
+
+        String strStartDate = "2025-12-01T17:00:00";
+        String strEndDate =   "2025-12-02T19:30:00";
 
         // Mock del ModelMapper
         Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
@@ -91,15 +99,14 @@ public class ReservationControllerTest {
         String reservationJson = objectMapper.writeValueAsString(reservationDto);
 
         // Rimuovi l'operazione di salvataggio del DAO nel test
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/reservations/add/"+ loggedUser.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/reservations/add/"+ loggedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reservationJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.endDate").value("2021-12-02T19:30:00")) // Use ISO 8601 format
-                .andExpect(jsonPath("$.startDate").value("2021-12-01T17:00:00")); // Use ISO 8601 format
+                .andExpect(jsonPath("$.endDate").value("2025-12-02T19:30:00"))
+                .andExpect(jsonPath("$.startDate").value("2025-12-01T17:00:00"));
+
 
         // Verifica che il servizio sia stato chiamato con l'oggetto corretto
         Mockito.verify(reservationService).save(Mockito.any(ReservationDto.class));
