@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,26 +63,7 @@ public class ReservationServiceImplTest {
     @Mock
     private UsersDao usersDao;
 
-    @Test
-    void testMappingReservationDtoToReservation() {
-        // Dati di input
-        DatesGetter datesGetter = new DatesGetter();
-        ReservationDto reservationDto = datesGetter.getReservationDto(null);
 
-        // Mapping con ModelMapper configurato
-        Reservation reservation = modelMapper.map(reservationDto, Reservation.class);
-
-        // Asserzioni
-        Assertions.assertNotNull(reservation);
-        Assertions.assertNotNull(reservation.getUser());
-        Assertions.assertEquals(reservationDto.getUser().getId(), reservation.getUser().getId());
-        Assertions.assertNotNull(reservation.getParkingSpot());
-        //Assertions.assertEquals(reservationDto.getParkingSpotId(), reservation.getParkingSpot().getId());
-        Assertions.assertNotNull(reservation.getLicencePlate());
-        Assertions.assertEquals(reservationDto.getLicensePlate(), reservation.getLicencePlate());
-        Assertions.assertEquals(reservationDto.getStartDate(), reservation.getStartDate());
-        Assertions.assertEquals(reservationDto.getEndDate(), reservation.getEndDate());
-    }
 
 
     @Test

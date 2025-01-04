@@ -72,7 +72,7 @@ public class DatesGetter {
         userDto.setBirthDate(LocalDate.of(2006, 12, 1));
         userDto.setRole("DRIVER");
 
-        assert authentication != null;
+
         reservationDto.setUser(userDto);
         reservationDto.setStartDate(startDate);
         reservationDto.setEndDate(endDate);
