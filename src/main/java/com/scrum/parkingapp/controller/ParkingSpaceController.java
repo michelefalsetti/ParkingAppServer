@@ -100,6 +100,15 @@ public class ParkingSpaceController {
         return new ResponseEntity<>(addressesDto, HttpStatus.OK);
     }
 
+    @DeleteMapping(path = "/delete/{spaceId}/{idUser}")
+    @PreAuthorize("( #idUser == authentication.principal.getId() and hasRole('OWNER') ) or hasRole('ADMIN')")
+    public ResponseEntity<Boolean> deleteParkingSpace(@PathVariable Long spaceId, @PathVariable UUID idUser) {
+        boolean deleted = parkingSpaceService.delete(spaceId, idUser);
+        if (!deleted)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
 
 
 }

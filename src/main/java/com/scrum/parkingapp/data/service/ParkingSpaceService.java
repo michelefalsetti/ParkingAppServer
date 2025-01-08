@@ -24,4 +24,5 @@ public interface ParkingSpaceService {
     List<AddressDto> getAllAddresses();
 
 
+    boolean delete(Long spaceId, UUID ownerId);
 }

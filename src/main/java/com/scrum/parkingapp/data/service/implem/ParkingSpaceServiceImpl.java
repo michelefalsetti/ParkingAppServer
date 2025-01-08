@@ -2,6 +2,7 @@ package com.scrum.parkingapp.data.service.implem;
 
 import com.scrum.parkingapp.data.dao.AddressDao;
 import com.scrum.parkingapp.data.dao.ParkingSpaceDao;
+import com.scrum.parkingapp.data.dao.ParkingSpotDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
 import com.scrum.parkingapp.data.entities.Address;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
@@ -26,6 +27,8 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
     private final UsersDao usersDao;
 
     private final ParkingSpaceDao parkingSpaceDao;
+
+    private final ParkingSpotDao parkingSpotDao;
 
     private final AddressDao addressDao;
 
@@ -111,6 +114,22 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
         return modelMapper.map(savedParkingSpace, ParkingSpaceDto.class);
     }
 
+    @Override
+    public boolean delete(Long spaceId, UUID userId) {
+        ParkingSpace parkingSpace = parkingSpaceDao.findById(spaceId)
+                .orElseThrow(() -> new IllegalArgumentException("ParkingSpace not found with id: " + spaceId));
+
+        if (!parkingSpace.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("User is not the owner of the parking space");
+        }
+
+        parkingSpotDao.deleteAll(parkingSpace.getParkingSpots());
+        parkingSpotDao.flush();
+
+        parkingSpaceDao.delete(parkingSpace);
+        return true;
+    }
+
 
     @Override
     public List<ParkingSpaceDto> getAllDto() {
@@ -123,10 +142,32 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
 
     @Override
     public List<ParkingSpaceDto> getAllByOwnerId(UUID ownerId) {
-         return parkingSpaceDao.findAllByUserId(ownerId).stream()
-                .map(parkingSpace -> modelMapper.map(parkingSpace, ParkingSpaceDto.class))
+
+        // Otteniamo tutti i ParkingSpace con i loro ParkingSpot (o null per ParkingSpot se non esistono)
+        List<Object[]> results = parkingSpaceDao.findAllByUserId(ownerId);
+
+        // Mappa per associare ogni ParkingSpace ai suoi ParkingSpot
+        Map<ParkingSpace, List<ParkingSpot>> spaceToSpots = new HashMap<>();
+
+        for (Object[] result : results) {
+            ParkingSpace space = (ParkingSpace) result[0];
+            ParkingSpot spot = (ParkingSpot) result[1];
+
+            // Aggiungi sempre il ParkingSpace alla mappa
+            spaceToSpots.computeIfAbsent(space, k -> new ArrayList<>());
+
+            // Aggiungi il ParkingSpot solo se non è null
+            if (spot != null) {
+                spaceToSpots.get(space).add(spot);
+            }
+        }
+
+        // Converti ogni entry della mappa in un DTO
+        return spaceToSpots.entrySet().stream()
+                .map(entry -> toParkingSpaceDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<AddressDto> getAllAddresses() {
@@ -134,6 +175,8 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
                 .map(address -> modelMapper.map(address, AddressDto.class))
                 .collect(Collectors.toList());
     }
+
+
 
 
 }

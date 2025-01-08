@@ -36,7 +36,7 @@ public class ParkingSpotController {
 
 
     @PostMapping(path= "/add/{idUser}")
-    @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
+    @PreAuthorize("(#idUser == authentication.principal.getId() and hasRole('OWNER') ) or hasRole('ADMIN')")
     public ResponseEntity<ParkingSpotDto> addParkingSpot(@RequestBody ParkingSpotDto parkingSpot,
                                                          @PathVariable UUID idUser) {
         System.out.println("pre add");
@@ -46,6 +46,16 @@ public class ParkingSpotController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(parkingSpotDto, HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/delete/{id}/{idUser}")
+    @PreAuthorize("#idUser == authentication.principal.getId()")
+    public ResponseEntity<Boolean> deleteParkingSpot(@PathVariable Long id, @PathVariable UUID idUser) {
+        boolean deleted = parkingSpotService.delete(id);
+        if (!deleted)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
 
 
 

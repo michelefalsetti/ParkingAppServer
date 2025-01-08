@@ -15,4 +15,5 @@ public interface ParkingSpotService {
 
     List<ParkingSpotDto> getByParkingSpaceId(Long parkingSpaceId);
 
+    Boolean delete(Long id);
 }

@@ -13,8 +13,19 @@ import java.util.UUID;
 @Repository
 public interface ParkingSpaceDao extends JpaRepository<ParkingSpace,  Long> {
 
+    /*
     @Query("SELECT ps FROM ParkingSpace ps WHERE ps.user.id = :userId")
-    List<ParkingSpace> findAllByUserId(UUID userId);
+    List<ParkingSpace> findAllByUserId(UUID userId);*/
+
+
+    @Query("""
+            SELECT DISTINCT ps, sp
+            FROM ParkingSpace ps
+            LEFT JOIN ps.parkingSpots sp
+            WHERE ps.user.id = :userId
+            
+            """)
+    List<Object[]> findAllByUserId(UUID userId);
 
     @Query("""
         SELECT DISTINCT ps, sp
