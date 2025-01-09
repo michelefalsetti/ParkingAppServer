@@ -89,21 +89,23 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-
-
     @Override
     public ReservationDto deleteById(Long id) {
         Reservation r = reservationDao.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Invalid reservation ID"));
 
-        if (r != null) {
+        if (r == null) {
             throw new IllegalArgumentException("Reservation not found");
         }
 
+        reservationDao.deleteParkingSpotReservationsByReservationId(id);
+        System.out.println("Relation deleted");
         reservationDao.deleteById(id);
+        System.out.println("Reservation deleted");
         return modelMapper.map(r, ReservationDto.class);
 
     }
+
 
 
     @Override

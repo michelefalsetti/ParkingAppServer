@@ -2,8 +2,11 @@ package com.scrum.parkingapp.data.dao;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.entities.PaymentMethod;
 import com.scrum.parkingapp.data.entities.Reservation;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,6 +22,11 @@ public interface ReservationDao extends JpaRepository<Reservation, Long> {
     List<Reservation> findAllReservation();
 
     List<Reservation> findAllByParkingSpotId(Long parkingSpotId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM parking_spot_reservations psr WHERE psr.reservations_id = :reservationId", nativeQuery = true)
+    void deleteParkingSpotReservationsByReservationId(@Param("reservationId") Long reservationId);
 
 
 

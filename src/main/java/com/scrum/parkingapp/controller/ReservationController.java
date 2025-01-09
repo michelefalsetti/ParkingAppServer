@@ -74,6 +74,15 @@ public class ReservationController {
         }
     }
 
+    @DeleteMapping(path = "/delete/{idRes}/{idUser}")
+    @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
+    public ResponseEntity<Boolean> deleteReservation(@PathVariable Long idRes, @PathVariable UUID idUser) {
+        ReservationDto r = reservationService.deleteById(idRes);
+        if (r == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
 
 
 
