@@ -12,6 +12,7 @@ import com.scrum.parkingapp.dto.ParkingSpotDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,11 +37,14 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
 
 
     @Override
+    @Transactional
     public ParkingSpotDto save(ParkingSpotDto parkingSpotDto) {
         ParkingSpot parkingSpot = modelMapper.map(parkingSpotDto, ParkingSpot.class);
+
         System.out.println("Post Mapping: " + parkingSpot);
 
         ParkingSpot ps = parkingSpotDao.save(parkingSpot);
+        System.out.println("Post Save: " + ps);
         return modelMapper.map(ps, ParkingSpotDto.class);
     }
 

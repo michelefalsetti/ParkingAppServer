@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.controllerTest;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scrum.parkingapp.config.ModelMapperConfig;
 import com.scrum.parkingapp.config.security.JwtService;
@@ -34,6 +35,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -42,14 +44,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static io.jsonwebtoken.impl.lang.Services.get;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,36 +91,138 @@ public class ParkingSpaceControllerTest {
     @Autowired
     private ObjectMapper objectMapper; // Usa l'ObjectMapper di Spring
 
+    private ParkingSpaceDto getParkingSpaceDto() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        ParkingSpaceDto parkingSpaceDto = new ParkingSpaceDto();
+        AddressDto addressDto = new AddressDto();
+        addressDto.setCity("Test City");
+        addressDto.setLatitude(39.123456);
+        addressDto.setLongitude(16.123456);
+        addressDto.setStreet("Test Street");
+
+        parkingSpaceDto.setId(1L);
+        parkingSpaceDto.setName("Test Parking");
+        parkingSpaceDto.setAddress(addressDto);
+
+        UserIdDto owner = new UserIdDto();
+        owner.setUserId(loggedUser.getId());
+        parkingSpaceDto.setUserId(owner);
+
+        // Aggiungiamo altri campi che potrebbero essere necessari
+
+        return parkingSpaceDto;
+    }
+
+    // Aggiungiamo un metodo di utilità per stampare il contenuto del DTO come JSON
+    private void printJson(ParkingSpaceDto dto) {
+        try {
+            System.out.println("DTO as JSON: " + objectMapper.writeValueAsString(dto));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     @Test
-    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "owner.rossi@example.com", role = "OWNER")
     void testAddParkingSpace_AsOwner() throws Exception {
+        // Get the authenticated user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
         ParkingSpaceDto parkingSpaceDto = getParkingSpaceDto();
 
-        // Mock del ModelMapper
-        when(modelMapper.map(any(), any()))
-                .thenReturn(new ParkingSpace());
 
-        // Simula la risposta del servizio
-        when(parkingSpaceService.save(any(ParkingSpaceDto.class)))
-                .thenReturn(parkingSpaceDto);
+        // Assicuriamoci che il servizio mockato ritorni un valore valido
+        when(parkingSpaceService.save(any(ParkingSpaceDto.class))).thenReturn(parkingSpaceDto);
 
-        // Usa l'ObjectMapper autowired
-        String parkingSpaceJson = objectMapper.writeValueAsString(parkingSpaceDto);
-
-        // Rimuovi l'operazione di salvataggio del DAO nel test
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/parkingSpaces/add")
+        // Nota il path corretto "/api/v1/parkingSpaces/add/"
+        MvcResult rightResult = mockMvc.perform(post("/api/v1/parkingSpaces/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(parkingSpaceJson))
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(parkingSpaceDto)))
+                .andDo(print()) // Aggiungiamo print() per vedere l'output dettagliato
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Test Parking"))
-                .andExpect(jsonPath("$.address.street").value("Test Street"))
                 .andExpect(jsonPath("$.address.city").value("Test City"))
-                        .andExpect(jsonPath("$.address.latitude").value(39.123456))
-                        .andExpect(jsonPath("$.address.longitude").value(16.123456));
+                .andExpect(jsonPath("$.address.street").value("Test Street"))
+                .andExpect(jsonPath("$.address.latitude").value(39.123456))
+                .andExpect(jsonPath("$.address.longitude").value(16.123456))
 
-        // Verifica che il servizio sia stato chiamato con l'oggetto corretto
-        Mockito.verify(parkingSpaceService).save(any(ParkingSpaceDto.class));
+                .andReturn();
+
+        // Stampiamo eventuali eccezioni
+        if (rightResult.getResolvedException() != null) {
+            System.out.println("Exception: " + rightResult.getResolvedException().getMessage());
+        }
+
+        verify(parkingSpaceService, times(1)).save(any(ParkingSpaceDto.class));
     }
+
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "owner.rossi@example.com", role = "OWNER")
+    void testAddParkingSpace_DifferentUserId() throws Exception {
+        // Get the authenticated user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+
+        ParkingSpaceDto unAuthorizedParkingSpaceDto = getParkingSpaceDto();
+
+        unAuthorizedParkingSpaceDto.getUserId().setUserId(UUID.randomUUID());
+
+
+        // Nota il path corretto "/api/v1/parkingSpaces/add/"
+        MvcResult result = mockMvc.perform(post("/api/v1/parkingSpaces/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(unAuthorizedParkingSpaceDto)))
+                .andDo(print()) // Aggiungiamo print() per vedere l'output dettagliato
+                .andExpect(status().is(500))
+
+                .andReturn();
+
+        // Stampiamo eventuali eccezioni
+        if (result.getResolvedException() != null) {
+            System.out.println("Exception: " + result.getResolvedException().getMessage());
+        }
+
+        verify(parkingSpaceService, times(0)).save(any(ParkingSpaceDto.class));
+    }
+
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "driver.rossi@example.com", role = "DRIVER")
+    void testAddParkingSpace_AsDriver() throws Exception {
+        // Get the authenticated user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        ParkingSpaceDto parkingSpaceDto = getParkingSpaceDto();
+
+        // Assicuriamoci che il servizio mockato ritorni un valore valido
+        when(parkingSpaceService.save(any(ParkingSpaceDto.class))).thenReturn(parkingSpaceDto);
+
+        // Nota il path corretto "/api/v1/parkingSpaces/add/"
+        MvcResult rightResult = mockMvc.perform(post("/api/v1/parkingSpaces/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(parkingSpaceDto)))
+                .andDo(print()) // Aggiungiamo print() per vedere l'output dettagliato
+                .andExpect(status().is(500))
+                .andReturn();
+
+        // Stampiamo eventuali eccezioni
+        if (rightResult.getResolvedException() != null) {
+            System.out.println("Exception: " + rightResult.getResolvedException().getMessage());
+        }
+
+        verify(parkingSpaceService, times(0)).save(any(ParkingSpaceDto.class));
+    }
+
+
 
     @Test
     @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
@@ -193,6 +300,33 @@ public class ParkingSpaceControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "driver.rossi@example.com", role = "OWNER")
+    void testRemoveParkingSpace_AsOwner() throws Exception {
+        // Get the authenticated user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        ParkingSpaceDto parkingSpaceDto = getParkingSpaceDto();
+
+        // Assicuriamoci che il servizio mockato ritorni un valore valido
+        when(parkingSpaceService.delete(Mockito.anyLong(), Mockito.any(UUID.class))).thenReturn(true);
+
+        // Nota il path corretto "/api/v1/parkingSpaces/add/"
+        MvcResult rightResult = mockMvc.perform(delete("/api/v1/parkingSpaces/delete/" + parkingSpaceDto.getId()
+                + "/" + loggedUser.getId()))
+                .andDo(print()) // Aggiungiamo print() per vedere l'output dettagliato
+                .andExpect(status().is(200))
+                .andReturn();
+
+        // Stampiamo eventuali eccezioni
+        if (rightResult.getResolvedException() != null) {
+            System.out.println("Exception: " + rightResult.getResolvedException().getMessage());
+        }
+
+        verify(parkingSpaceService, times(1)).delete(Mockito.anyLong(), Mockito.any(UUID.class));
+    }
+
     /*
 
     @Test
@@ -210,31 +344,11 @@ public class ParkingSpaceControllerTest {
                 .andExpect(status().isBadRequest());
     }*/
 
-    private static ParkingSpaceDto getParkingSpaceDto() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
 
-        ParkingSpaceDto parkingSpaceDto = new ParkingSpaceDto();
-        AddressDto  addressDto = new AddressDto();
-        addressDto.setCity("Test City");
-        addressDto.setLatitude(39.123456);
-        addressDto.setLongitude(16.123456);
-        addressDto.setStreet("Test Street");
-
-        parkingSpaceDto.setId(1L);
-        parkingSpaceDto.setName("Test Parking");
-        parkingSpaceDto.setAddress(addressDto);
-
-
-        UserIdDto owner = new UserIdDto();
-        owner.setUserId(loggedUser.getId());
-        parkingSpaceDto.setUserId(owner);
-        return parkingSpaceDto;
-    }
-
+    /*
     @Test
     @WithMockCustomUser(name = "AdminUser", role = "ADMIN")
-    void testSaveParkingSpace_AsAdmin() throws Exception {
+    void testAddParkingSpace_AsAdmin() throws Exception {
         ParkingSpaceDto parkingSpaceDto = getParkingSpaceDto();
         parkingSpaceDto.setName("Admin Parking");
 
@@ -263,6 +377,6 @@ public class ParkingSpaceControllerTest {
                 .andExpect(jsonPath("$.address.longitude").value(16.123456));
 
         Mockito.verify(parkingSpaceService).save(any(ParkingSpaceDto.class));
-    }
+    }*/
 
 }

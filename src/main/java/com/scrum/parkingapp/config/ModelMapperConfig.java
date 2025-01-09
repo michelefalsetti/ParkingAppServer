@@ -114,6 +114,28 @@ public class ModelMapperConfig {
             }
         });
 
+        modelMapper.addMappings(new PropertyMap<ParkingSpotDto, ParkingSpot>() {
+            @Override
+            protected void configure() {
+                map(source.getId(), destination.getId());
+                map(source.getNumber(), destination.getNumber());
+                map(source.getBasePrice(), destination.getBasePrice());
+                map(source.getParkingSpaceId(), destination.getParkingspaceId().getId());
+                map(source.getReservations(), destination.getReservations());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<ParkingSpot, ParkingSpotDto>() {
+            @Override
+            protected void configure() {
+                map(source.getId(), destination.getId());
+                map(source.getNumber(), destination.getNumber());
+                map(source.getBasePrice(), destination.getBasePrice());
+                map(source.getParkingspaceId().getId(), destination.getParkingSpaceId());
+                map(source.getReservations(), destination.getReservations());
+            }
+        });
+
 
 
         return modelMapper;

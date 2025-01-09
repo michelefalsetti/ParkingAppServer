@@ -34,6 +34,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.UUID;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -93,12 +95,110 @@ public class ParkingSpotControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(parkingSpaceJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.number").value("TEST-1"));
+                .andExpect(jsonPath("$.number").value("TEST-1"))
+                .andExpect(jsonPath("$.parkingSpaceId").value(1L));
                 //.andExpect(jsonPath("$.address").value("123 Test Street"));
 
         // Verifica che il servizio sia stato chiamato con l'oggetto corretto
-        Mockito.verify(parkingSpotService).save(Mockito.any(ParkingSpotDto.class));
+        Mockito.verify(parkingSpotService, Mockito.times(1)).save(Mockito.any(ParkingSpotDto.class));
     }
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "OWNER")
+    void testRemoveSpot_Owner() throws Exception {
+        ParkingSpotDto parkingSpotDto = getParkingSpotDto();
+
+        // Mock del ModelMapper
+        Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
+                .thenReturn(new ParkingSpace());
+
+        // Simula la risposta del servizio
+        Mockito.when(parkingSpotService.save(Mockito.any(ParkingSpotDto.class)))
+                .thenReturn(parkingSpotDto);
+
+
+        Mockito.when(parkingSpotService.delete(parkingSpotDto.getId())).thenReturn(true);
+
+        // Rimuovi l'operazione di salvataggio del DAO nel test
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        Long id = parkingSpotDto.getId();
+        UUID idUser = loggedUser.getId();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/parkingSpots/delete/"+id+
+                                "/"+ idUser)
+                )
+                .andExpect(status().isOk());
+
+
+        // Verifica che il servizio sia stato chiamato con l'oggetto corretto
+        Mockito.verify(parkingSpotService, Mockito.times(1)).delete(1L);
+    }
+
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "OWNER")
+    void testRemoveSpot_differentUserId() throws Exception {
+        ParkingSpotDto parkingSpotDto = getParkingSpotDto();
+
+        // Mock del ModelMapper
+        Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
+                .thenReturn(new ParkingSpace());
+
+        // Simula la risposta del servizio
+        Mockito.when(parkingSpotService.save(Mockito.any(ParkingSpotDto.class)))
+                .thenReturn(parkingSpotDto);
+
+
+        Mockito.when(parkingSpotService.delete(parkingSpotDto.getId())).thenReturn(true);
+
+        // Rimuovi l'operazione di salvataggio del DAO nel test
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        Long id = parkingSpotDto.getId();
+        UUID idUser = loggedUser.getId();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/parkingSpots/delete/"+id+
+                        "/"+ UUID.randomUUID())
+                )
+                .andExpect(status().is(500));
+
+
+        // Verifica che il servizio sia stato chiamato con l'oggetto corretto
+        Mockito.verify(parkingSpotService, Mockito.times(0)).delete(Mockito.anyLong());
+    }
+
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
+    void testRemoveSpot_Driver() throws Exception {
+        ParkingSpotDto parkingSpotDto = getParkingSpotDto();
+
+        // Mock del ModelMapper
+        Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
+                .thenReturn(new ParkingSpace());
+
+        // Simula la risposta del servizio
+        Mockito.when(parkingSpotService.save(Mockito.any(ParkingSpotDto.class)))
+                .thenReturn(parkingSpotDto);
+
+
+        Mockito.when(parkingSpotService.delete(parkingSpotDto.getId())).thenReturn(true);
+
+        // Rimuovi l'operazione di salvataggio del DAO nel test
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        Long id = parkingSpotDto.getId();
+        UUID idUser = loggedUser.getId();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/parkingSpots/delete/"+id+
+                        "/"+ idUser)
+                )
+                .andExpect(status().is(500));
+
+
+        // Verifica che il servizio sia stato chiamato con l'oggetto corretto
+        Mockito.verify(parkingSpotService, Mockito.times(0)).delete(Mockito.anyLong());
+    }
+
+
 
     private ParkingSpotDto getParkingSpotDto() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

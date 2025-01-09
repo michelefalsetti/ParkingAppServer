@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.controller;
 
 
+import com.scrum.parkingapp.config.security.LoggedUserDetails;
 import com.scrum.parkingapp.data.entities.Address;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.dto.AddressDto;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -61,7 +64,7 @@ public class ParkingSpaceController {
 
 
     @GetMapping(path= "/getByUser/{idUser}")
-    @PreAuthorize("#idUser == authentication.principal.getId() or hasRole('ADMIN')")
+    @PreAuthorize("(#idUser == authentication.principal.getId() and hasRole('OWNER') ) or hasRole('ADMIN')")
     public ResponseEntity<List<ParkingSpaceDto>> getByUser(@PathVariable UUID idUser) {
         List<ParkingSpaceDto> parkingSpacesDto = parkingSpaceService.getAllByOwnerId(idUser);
 
@@ -72,8 +75,10 @@ public class ParkingSpaceController {
 
 
     @PostMapping(path= "/add")
-    @PreAuthorize("#parkingSpaceDto.getUserId().getUserId() == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<ParkingSpaceDto> addParkingSpace(@Valid @RequestBody ParkingSpaceDto parkingSpaceDto) {
+    @PreAuthorize("( #parkingSpaceDto.userId.userId == authentication.principal.getId() and hasRole('OWNER') ) or hasRole('ADMIN')")
+    //@PreAuthorize("isAuthenticated() and hasRole('OWNER')")
+    public ResponseEntity<ParkingSpaceDto> addParkingSpace(@RequestBody ParkingSpaceDto parkingSpaceDto) {
+
         System.out.println("pre add");
         ParkingSpaceDto psDto = parkingSpaceService.save(parkingSpaceDto);
         System.out.println("post add");
@@ -81,15 +86,6 @@ public class ParkingSpaceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(psDto, HttpStatus.OK);
     }
-    /*
-    @GetMapping(path= "/delete/{id}")
-    @PreAuthorize("#id == authentication.principal.getId() or hasRole('ADMIN')")
-    public ResponseEntity<ParkingSpaceDto> deleteParkingSpace(@PathVariable Long id) {
-        ParkingSpaceDto psDto = parkingSpaceService.deleteById(id);
-        if (psDto == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(psDto, HttpStatus.OK);
-    }*/
 
     @GetMapping(path= "/getAllAddresses")
     @PreAuthorize("isAuthenticated()")

@@ -48,7 +48,7 @@ public class ParkingSpotController {
     }
 
     @DeleteMapping(path = "/delete/{id}/{idUser}")
-    @PreAuthorize("#idUser == authentication.principal.getId()")
+    @PreAuthorize("(#idUser == authentication.principal.getId() and hasRole('OWNER') ) or hasRole('ADMIN')")
     public ResponseEntity<Boolean> deleteParkingSpot(@PathVariable Long id, @PathVariable UUID idUser) {
         boolean deleted = parkingSpotService.delete(id);
         if (!deleted)

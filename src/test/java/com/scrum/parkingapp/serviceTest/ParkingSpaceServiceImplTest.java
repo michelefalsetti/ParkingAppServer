@@ -11,10 +11,7 @@ import com.scrum.parkingapp.data.dao.AddressDao;
 import com.scrum.parkingapp.data.dao.ParkingSpaceDao;
 import com.scrum.parkingapp.data.dao.ParkingSpotDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
-import com.scrum.parkingapp.data.entities.Address;
-import com.scrum.parkingapp.data.entities.ParkingSpace;
-import com.scrum.parkingapp.data.entities.ParkingSpot;
-import com.scrum.parkingapp.data.entities.Reservation;
+import com.scrum.parkingapp.data.entities.*;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.data.service.RefreshTokenService;
 import com.scrum.parkingapp.data.service.RevokedTokenService;
@@ -63,6 +60,9 @@ public class ParkingSpaceServiceImplTest {
 
     @Mock
     private ParkingSpaceDao parkingSpaceDao;
+
+    @Mock
+    private ParkingSpotDao parkingSpotDao;
 
     @Mock
     private AddressDao addressDao;
@@ -124,6 +124,91 @@ public class ParkingSpaceServiceImplTest {
             assertNotNull(parkingSpotDto);
         });
     }
+
+    @Test
+    @WithMockCustomUser(role = "OWNER")
+    void testDeleteParkingSpace_Success() {
+        UUID userId = UUID.randomUUID();
+        Long spaceId = 1L;
+
+        User owner = new Owner();
+        owner.setId(userId);
+
+        ParkingSpace parkingSpace = new ParkingSpace();
+        parkingSpace.setId(spaceId);
+        parkingSpace.setUser(owner);
+
+        List<ParkingSpot> spots = Arrays.asList(new ParkingSpot(), new ParkingSpot());
+        parkingSpace.setParkingSpots(spots);
+
+        when(parkingSpaceDao.findById(spaceId)).thenReturn(Optional.of(parkingSpace));
+
+        boolean result = parkingSpaceService.delete(spaceId, userId);
+
+        assertTrue(result);
+        verify(parkingSpotDao).deleteAll(spots);
+        verify(parkingSpotDao).flush();
+        verify(parkingSpaceDao).delete(parkingSpace);
+    }
+
+    @Test
+    @WithMockCustomUser(role = "OWNER")
+    void testDeleteParkingSpace_NotFound() {
+        Long spaceId = 1L;
+        UUID userId = UUID.randomUUID();
+
+        when(parkingSpaceDao.findById(spaceId)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                parkingSpaceService.delete(spaceId, userId)
+        );
+    }
+
+    @Test
+    @WithMockCustomUser(role = "OWNER")
+    void testDeleteParkingSpace_WrongOwner() {
+        Long spaceId = 1L;
+        UUID userId = UUID.randomUUID();
+        UUID differentUserId = UUID.randomUUID();
+
+        User owner = new Owner();
+        owner.setId(differentUserId);
+
+        ParkingSpace parkingSpace = new ParkingSpace();
+        parkingSpace.setId(spaceId);
+        parkingSpace.setUser(owner);
+
+        when(parkingSpaceDao.findById(spaceId)).thenReturn(Optional.of(parkingSpace));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                parkingSpaceService.delete(spaceId, userId)
+        );
+    }
+
+    @Test
+    @WithMockCustomUser(role = "OWNER")
+    void testDeleteParkingSpace_NoSpots() {
+        UUID userId = UUID.randomUUID();
+        Long spaceId = 1L;
+
+        User owner = new Owner();
+        owner.setId(userId);
+
+        ParkingSpace parkingSpace = new ParkingSpace();
+        parkingSpace.setId(spaceId);
+        parkingSpace.setUser(owner);
+        parkingSpace.setParkingSpots(new ArrayList<>());
+
+        when(parkingSpaceDao.findById(spaceId)).thenReturn(Optional.of(parkingSpace));
+
+        boolean result = parkingSpaceService.delete(spaceId, userId);
+
+        assertTrue(result);
+        verify(parkingSpotDao).deleteAll(new ArrayList<>());
+        verify(parkingSpotDao).flush();
+        verify(parkingSpaceDao).delete(parkingSpace);
+    }
+
 
     @Test
     void testFindAllByCityAndStartDateAndEndDate() {
