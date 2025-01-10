@@ -162,6 +162,64 @@ public class ReservationServiceImplTest {
         verify(reservationDao, never()).save(Mockito.any(Reservation.class));
     }
 
+   @Test
+    void testRemoveReservation() {
+        // Creare ID e oggetti di test
+        Long reservationId = 1L;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ReservationDto inputDto = datesGetter.getReservationDto(authentication);
+
+        Reservation reservation = new Reservation();
+        reservation.setId(reservationId);
+        reservation.setStartDate(inputDto.getStartDate());
+        reservation.setEndDate(inputDto.getEndDate());
+        reservation.setLicencePlate(inputDto.getLicensePlate());
+        reservation.setPrice(inputDto.getPrice());
+
+        ParkingSpot parkingSpot = datesGetter.getParkingSpot(authentication, reservationId);
+        reservation.setParkingSpot(parkingSpot);
+
+        // Configurare i mock con ID specifico
+        when(reservationDao.findById(reservationId)).thenReturn(Optional.of(reservation));
+        doNothing().when(reservationDao).deleteParkingSpotReservationsByReservationId(reservationId);
+        doNothing().when(reservationDao).deleteById(reservationId);
+        when(modelMapper.map(reservation, ReservationDto.class)).thenReturn(inputDto);
+
+        // Act
+        ReservationDto resultDto = reservationService.deleteById(reservationId);
+
+        // Verify
+        verify(reservationDao).findById(reservationId);
+        verify(reservationDao).deleteParkingSpotReservationsByReservationId(reservationId);
+        verify(reservationDao).deleteById(reservationId);
+        verify(modelMapper).map(reservation, ReservationDto.class);
+
+        assertNotNull(resultDto);
+        assertEquals(inputDto.getPrice(), resultDto.getPrice());
+    }
+
+    @Test
+    void deleteById_InvalidId_ShouldThrowException() {
+        // Arrange
+        Long invalidId = 999L;
+        when(reservationDao.findById(invalidId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> reservationService.deleteById(invalidId)
+        );
+
+        assertEquals("Invalid reservation ID", exception.getMessage());
+
+        // Verify exactly what happened
+        verify(reservationDao).findById(invalidId);
+        verify(reservationDao, times(0)).deleteParkingSpotReservationsByReservationId(Mockito.any());
+        verify(reservationDao, times(0)).deleteById(Mockito.any());
+        verifyNoInteractions(modelMapper);
+    }
+
+
     /*
     @Test
     void shouldThrowExceptionWhenStartDateAfterEndDate() {

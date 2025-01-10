@@ -112,6 +112,34 @@ public class ReservationControllerTest {
         Mockito.verify(reservationService).save(Mockito.any(ReservationDto.class));
     }
 
+    @Test
+    @WithMockCustomUser(name = "Mario", lastname = "Rossi", email = "mario.rossi@example.com", role = "DRIVER")
+    void testRemoveReservation_Driver() throws Exception {
+        DatesGetter datesGetter = new DatesGetter();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoggedUserDetails loggedUser = (LoggedUserDetails) authentication.getPrincipal();
+
+        ReservationDto reservationDto = datesGetter.getReservationDto(authentication);
+
+
+        Mockito.when(modelMapper.map(Mockito.any(), Mockito.any()))
+                .thenReturn(new Reservation());
+
+        Mockito.when(reservationService.deleteById(Mockito.anyLong()))
+                .thenReturn(reservationDto);
+
+        Long idRes = reservationDto.getId();
+        UUID idUser = loggedUser.getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/reservations/delete/"+ idRes + "/" + idUser))
+                .andExpect(status().isOk());
+
+
+        Mockito.verify(reservationService, Mockito.times(1)).deleteById(Mockito.anyLong());
+
+
+    }
+
 
 
 
