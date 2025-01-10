@@ -59,12 +59,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         // Crea la nuova Reservation
         Reservation reservation = new Reservation();
-        reservation.setLicencePlate(reservationDto.getLicensePlate());
+        reservation.setLicensePlate(reservationDto.getLicensePlate());
         reservation.setUser(user);
         reservation.setParkingSpot(parkingSpot);
         reservation.setStartDate(reservationDto.getStartDate());
         reservation.setEndDate(reservationDto.getEndDate());
         reservation.setPrice(reservationDto.getPrice());
+        reservation.setPaymentMethod(reservationDto.getPaymentMethod());
 
         // Validazioni aggiuntive
         if (reservation.getStartDate().isAfter(reservation.getEndDate())) {

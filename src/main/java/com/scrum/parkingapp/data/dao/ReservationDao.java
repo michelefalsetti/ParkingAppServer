@@ -1,6 +1,5 @@
 package com.scrum.parkingapp.data.dao;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
-import com.scrum.parkingapp.data.entities.PaymentMethod;
 import com.scrum.parkingapp.data.entities.Reservation;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;

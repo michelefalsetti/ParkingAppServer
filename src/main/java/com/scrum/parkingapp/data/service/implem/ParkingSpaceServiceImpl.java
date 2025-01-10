@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,8 +92,10 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
             address = new Address();
             address.setCity(parkingSpaceDto.getAddress().getCity());
             address.setStreet(parkingSpaceDto.getAddress().getStreet());
-            address.setLatitude(parkingSpaceDto.getAddress().getLatitude());
-            address.setLongitude(parkingSpaceDto.getAddress().getLongitude());
+            Double latitude = parkingSpaceDto.getAddress().getLatitude();
+            Double longitude = parkingSpaceDto.getAddress().getLongitude();
+            address.setLatitude(roundDouble(latitude, 5));
+            address.setLongitude(roundDouble(longitude, 5));
 
             // Salva il nuovo indirizzo
             address = addressDao.save(address);
@@ -174,6 +178,12 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
         return parkingSpaceDao.findAllAddresses().stream()
                 .map(address -> modelMapper.map(address, AddressDto.class))
                 .collect(Collectors.toList());
+    }
+
+    public static double roundDouble(double number, int decimalPlaces) {
+        BigDecimal bd = new BigDecimal(number);
+        BigDecimal roundedBd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        return roundedBd.doubleValue();
     }
 
 

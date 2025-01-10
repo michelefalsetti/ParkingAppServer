@@ -58,6 +58,7 @@ public class ReservationController {
     public ResponseEntity<ReservationDto> addReservation(@PathVariable UUID idUser,  @RequestBody ReservationDto reservationDto) {
         log.info("User ID from path: {}", idUser);
         log.info("DTO received: {}", reservationDto);
+        System.out.println("Res dto: " + reservationDto.toString());
 
         if (!idUser.equals(reservationDto.getUser().getId())) {
             log.error("Mismatch between path user ID and body user ID");

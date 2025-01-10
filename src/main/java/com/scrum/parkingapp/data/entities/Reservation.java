@@ -2,6 +2,7 @@ package com.scrum.parkingapp.data.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.scrum.parkingapp.data.domain.PaymentMethodType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,9 @@ public class Reservation {
     @Column(name = "PRICE", nullable = false)
     private Double price;
 
+    @Basic(optional = false)
+    @Column(name = "PAYMENT_METHOD", nullable = false)
+    private PaymentMethodType paymentMethod;
 
     @ManyToOne
     @JoinColumn(
@@ -39,8 +43,8 @@ public class Reservation {
     @JsonBackReference //serve per evitare il loop infinito
     private ParkingSpot parkingSpot;
 
-    @Column(name = "LICENCE_PLATE", nullable = false)
-    private String licencePlate;
+    @Column(name = "LICENSE_PLATE", nullable = false)
+    private String licensePlate;
 
 
     @Column(name = "START_DATE", nullable = false)

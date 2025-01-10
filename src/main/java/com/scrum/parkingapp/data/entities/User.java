@@ -1,5 +1,6 @@
 package com.scrum.parkingapp.data.entities;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -42,8 +43,8 @@ public class User {
     private List<Reservation> reservations = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PaymentMethod> paymentMethods;
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    //private List<PaymentMethod> paymentMethods;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ParkingSpace> parkingSpaces = new ArrayList<>();

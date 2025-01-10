@@ -314,7 +314,7 @@ public class ParkingSpaceServiceImplTest {
         Reservation reservation = new Reservation();
         //reservation.setId(id);
         reservation.setPrice(10.0);
-        reservation.setLicencePlate("AB123CD");
+        reservation.setLicensePlate("AB123CD");
         reservation.setStartDate(startDate);
         reservation.setEndDate(endDate);
         reservation.setParkingSpot(spot);

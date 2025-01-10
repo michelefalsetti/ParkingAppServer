@@ -58,12 +58,13 @@ public class ModelMapperConfig {
             }
         });
 
+        /*
         modelMapper.addMappings(new PropertyMap<PaymentMethodDto, PaymentMethod>() {
             @Override
             protected void configure(){
                 skip(destination.getCardNumber());
             }
-        });
+        });*/
 
         modelMapper.addMappings(new PropertyMap<RefreshTokenDto, RefreshToken>() {
             @Override
@@ -81,8 +82,9 @@ public class ModelMapperConfig {
                 map(source.getId(), destination.getId());
                 map(source.getPrice(), destination.getPrice());
                 map(source.getUser(), destination.getUser());
-                map(source.getLicensePlate(), destination.getLicencePlate());
+                map(source.getLicensePlate(), destination.getLicensePlate());
                 //map(source.getParkingSpotId(), destination.getParkingSpot());
+                map(source.getPaymentMethod(), destination.getPaymentMethod());
                 map(source.getStartDate(), destination.getStartDate());
                 map(source.getEndDate(), destination.getEndDate());
 

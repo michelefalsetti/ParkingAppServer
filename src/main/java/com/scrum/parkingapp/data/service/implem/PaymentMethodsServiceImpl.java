@@ -1,5 +1,6 @@
 package com.scrum.parkingapp.data.service.implem;
 
+/*
 import com.scrum.parkingapp.config.EncryptionConfig;
 import com.scrum.parkingapp.data.dao.PaymentMethodsDao;
 import com.scrum.parkingapp.data.dao.UsersDao;
@@ -116,4 +117,4 @@ public class PaymentMethodsServiceImpl implements PaymentMethodsService {
         return cardNumber.substring(0, 12) + "****";
     }
 
-}
+}*/

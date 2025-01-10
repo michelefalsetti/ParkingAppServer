@@ -74,7 +74,7 @@ public class ReservationServiceImplTest {
 
         reservation.setStartDate(inputDto.getStartDate());
         reservation.setEndDate(inputDto.getEndDate());
-        reservation.setLicencePlate(inputDto.getLicensePlate());
+        reservation.setLicensePlate(inputDto.getLicensePlate());
         reservation.setPrice(inputDto.getPrice());
 
         User user = new User();
@@ -173,7 +173,7 @@ public class ReservationServiceImplTest {
         reservation.setId(reservationId);
         reservation.setStartDate(inputDto.getStartDate());
         reservation.setEndDate(inputDto.getEndDate());
-        reservation.setLicencePlate(inputDto.getLicensePlate());
+        reservation.setLicensePlate(inputDto.getLicensePlate());
         reservation.setPrice(inputDto.getPrice());
 
         ParkingSpot parkingSpot = datesGetter.getParkingSpot(authentication, reservationId);
@@ -276,7 +276,7 @@ public class ReservationServiceImplTest {
         reservation.setParkingSpot(parkingSpot);
         reservation.setStartDate(LocalDateTime.now());
         reservation.setEndDate(LocalDateTime.now().plusHours(2));
-        reservation.setLicencePlate("ABC123");
+        reservation.setLicensePlate("ABC123");
         return reservation;
     }
 
