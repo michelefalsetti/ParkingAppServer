@@ -1,6 +1,7 @@
 package com.scrum.parkingapp.data.service;
 
 import com.scrum.parkingapp.dto.ReservationDto;
+import com.scrum.parkingapp.dto.ReservationWithDetailsDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,5 +17,7 @@ public interface ReservationService {
     ReservationDto save(ReservationDto reservationDto);
 
     ReservationDto deleteById(Long id);
+
+    List<ReservationWithDetailsDto> getUserReservationsWithDetails(UUID userId);
 
 }

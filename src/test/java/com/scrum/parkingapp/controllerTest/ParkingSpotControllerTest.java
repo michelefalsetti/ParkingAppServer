@@ -9,6 +9,7 @@ import com.scrum.parkingapp.config.security.LoggedUserDetailsService;
 import com.scrum.parkingapp.config.security.SecurityConfig;
 import com.scrum.parkingapp.controller.ParkingSpaceController;
 import com.scrum.parkingapp.controller.ParkingSpotController;
+import com.scrum.parkingapp.data.domain.SpotType;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.data.service.ParkingSpotService;
@@ -212,6 +213,7 @@ public class ParkingSpotControllerTest {
 
         parkingSpotDto.setParkingSpaceId(1L);
         parkingSpotDto.setNumber("TEST-1");
+        parkingSpotDto.setType(SpotType.CAR);
         parkingSpotDto.setReservations(null);
 
         return parkingSpotDto;

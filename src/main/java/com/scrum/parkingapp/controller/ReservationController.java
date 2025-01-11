@@ -4,6 +4,7 @@ import com.scrum.parkingapp.data.service.ParkingSpaceService;
 import com.scrum.parkingapp.data.service.ReservationService;
 import com.scrum.parkingapp.dto.ParkingSpaceDto;
 import com.scrum.parkingapp.dto.ReservationDto;
+import com.scrum.parkingapp.dto.ReservationWithDetailsDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,21 @@ public class ReservationController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(reservationsDto, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/getWithDetails/{idUser}")
+    @PreAuthorize(" isAuthenticated()")
+    public ResponseEntity<List<ReservationWithDetailsDto>> getWithDetails(@PathVariable UUID idUser){
+        List<ReservationWithDetailsDto> res = reservationService.getUserReservationsWithDetails(idUser);
+
+        System.out.println("RESERVATION:" + res.toString());
+
+        if (res == null || res.isEmpty()) {
+            System.out.println("Is null");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new  ResponseEntity<>(res, HttpStatus.OK);
+    }
+
 
     @PutMapping(path = "/add/{idUser}")
     @PreAuthorize("isAuthenticated()")

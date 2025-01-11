@@ -87,6 +87,7 @@ public class ParkingSpaceController {
         return new ResponseEntity<>(psDto, HttpStatus.OK);
     }
 
+
     @GetMapping(path= "/getAllAddresses")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<AddressDto>> getAllAddresses() {

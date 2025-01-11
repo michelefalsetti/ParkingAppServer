@@ -46,6 +46,9 @@ public interface ParkingSpaceDao extends JpaRepository<ParkingSpace,  Long> {
 
 
 
+
+
+
     @Query("SELECT a FROM Address a")
     List<Address> findAllAddresses();
 

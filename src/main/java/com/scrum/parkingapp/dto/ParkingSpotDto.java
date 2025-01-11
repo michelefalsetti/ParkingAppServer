@@ -1,5 +1,6 @@
 package com.scrum.parkingapp.dto;
 
+import com.scrum.parkingapp.data.domain.SpotType;
 import com.scrum.parkingapp.data.entities.Reservation;
 import lombok.Data;
 import org.apache.catalina.LifecycleState;
@@ -13,6 +14,8 @@ public class ParkingSpotDto {
     private Long id;
 
     private String number;
+
+    private SpotType type;
 
     private Long parkingSpaceId;
 

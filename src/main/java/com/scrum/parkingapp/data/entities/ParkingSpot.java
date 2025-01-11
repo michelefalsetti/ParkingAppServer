@@ -2,6 +2,8 @@ package com.scrum.parkingapp.data.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.scrum.parkingapp.data.domain.PaymentMethodType;
+import com.scrum.parkingapp.data.domain.SpotType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,10 @@ public class ParkingSpot {
 
     @Column(name = "NUMBER", nullable = false)
     private String number;
+
+
+    @Column(name = "TYPE", nullable = false)
+    private SpotType type;
 
     @ManyToOne
     @JoinColumn(

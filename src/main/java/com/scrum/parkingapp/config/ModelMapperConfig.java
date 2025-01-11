@@ -121,6 +121,7 @@ public class ModelMapperConfig {
             protected void configure() {
                 map(source.getId(), destination.getId());
                 map(source.getNumber(), destination.getNumber());
+                map(source.getType(), destination.getType());
                 map(source.getBasePrice(), destination.getBasePrice());
                 map(source.getParkingSpaceId(), destination.getParkingspaceId().getId());
                 map(source.getReservations(), destination.getReservations());

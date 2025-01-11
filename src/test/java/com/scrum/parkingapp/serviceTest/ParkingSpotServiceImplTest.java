@@ -2,6 +2,7 @@ package com.scrum.parkingapp.serviceTest;
 
 
 import com.scrum.parkingapp.data.dao.*;
+import com.scrum.parkingapp.data.domain.SpotType;
 import com.scrum.parkingapp.data.entities.ParkingSpace;
 import com.scrum.parkingapp.data.entities.ParkingSpot;
 import com.scrum.parkingapp.data.entities.Reservation;
@@ -58,6 +59,7 @@ public class ParkingSpotServiceImplTest {
         spotDto.setParkingSpaceId(parkingSpaceId);
         spotDto.setBasePrice(10.0);
         spotDto.setNumber("A3");
+        spotDto.setType(SpotType.CAR);
 
         ParkingSpace parkingSpace = new ParkingSpace();
         parkingSpace.setId(parkingSpaceId);
@@ -68,6 +70,7 @@ public class ParkingSpotServiceImplTest {
         spot.setParkingspaceId(parkingSpace);
         spot.setBasePrice(10.0);
         spot.setNumber("A3");
+        spot.setType(SpotType.CAR);
 
         // Mock
         when(modelMapper.map(Mockito.any(ParkingSpotDto.class), Mockito.eq(ParkingSpot.class))).thenReturn(spot);
