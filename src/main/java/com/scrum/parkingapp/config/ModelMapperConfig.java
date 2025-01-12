@@ -8,6 +8,9 @@ import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Configuration
 public class ModelMapperConfig {
 
@@ -143,4 +146,6 @@ public class ModelMapperConfig {
 
         return modelMapper;
     }
+
+
 }

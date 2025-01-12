@@ -14,6 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,8 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
     @Transactional
     public ParkingSpotDto save(ParkingSpotDto parkingSpotDto) {
         ParkingSpot parkingSpot = modelMapper.map(parkingSpotDto, ParkingSpot.class);
+
+        parkingSpot.setBasePrice(roundDouble(parkingSpot.getBasePrice(), 2));
 
         System.out.println("Post Mapping: " + parkingSpot);
 
@@ -86,6 +90,12 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
         System.out.println("ParkingSpot deleted");
         return true;
 
+    }
+
+    public static double roundDouble(double number, int decimalPlaces) {
+        BigDecimal bd = new BigDecimal(number);
+        BigDecimal roundedBd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        return roundedBd.doubleValue();
     }
 
 

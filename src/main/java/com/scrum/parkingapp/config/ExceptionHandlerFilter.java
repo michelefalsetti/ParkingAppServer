@@ -2,7 +2,6 @@ package com.scrum.parkingapp.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scrum.parkingapp.dto.ServiceError;
-import com.scrum.parkingapp.exception.AddressNotFoundException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -50,23 +49,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
                 response.getWriter().write(json);
                 response.getWriter().flush();
 
-            } else if (e instanceof AddressNotFoundException) {
-                int status = HttpStatus.NOT_FOUND.value();
-                String message = "Address not found";
-
-                ServiceError error = new ServiceError(
-                        status,
-                        new Date(),
-                        request.getRequestURI(),
-                        message
-                );
-
-                response.setStatus(status);
-                response.setContentType("application/json");
-                String json = objectMapper.writeValueAsString(error);
-                response.getWriter().write(json);
-                response.getWriter().flush();
-            } else {
+            }
+            else {
                 throw e;
             }
 
