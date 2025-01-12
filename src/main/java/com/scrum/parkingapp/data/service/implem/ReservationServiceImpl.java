@@ -17,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -110,7 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setParkingSpot(parkingSpot);
         reservation.setStartDate(reservationDto.getStartDate());
         reservation.setEndDate(reservationDto.getEndDate());
-        reservation.setPrice(reservationDto.getPrice());
+        reservation.setPrice(roundDouble(reservationDto.getPrice(), 2));
         reservation.setPaymentMethod(reservationDto.getPaymentMethod());
 
         // Validazioni aggiuntive
@@ -168,6 +170,12 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDao.findAllByParkingSpotId(spotId).stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDto.class))
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    public static double roundDouble(double number, int decimalPlaces) {
+        BigDecimal bd = new BigDecimal(number);
+        BigDecimal roundedBd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        return roundedBd.doubleValue();
     }
 
 

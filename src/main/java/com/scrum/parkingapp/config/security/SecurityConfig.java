@@ -22,7 +22,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 @Configuration
 @EnableWebSecurity
@@ -99,7 +103,8 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() { //serve per abilitare le chiamate da localhost
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Arrays.asList("https://localhost:*","https://192.168.1.23:*", "https://10.0.2.2:*")); // Modifica secondo le tue esigenze
+            configuration.setAllowedOrigins(Arrays.asList("https://localhost:*","https://192.168.1.50:*", "https://10.0.2.2:*",
+                    "https://*", "https://" + getLocalIPv4Address()+ ":*" )); // Modifica secondo le tue esigenze
             //configuration.setAllowedOrigins(Arrays.asList("https://localhost:8081","https://192.168.1.54:8081", "https://93.44.97.32")); // Modifica secondo le tue esigenze
 
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -111,4 +116,30 @@ public class SecurityConfig {
 
             return source;
         }
-    }
+
+        public static String getLocalIPv4Address() {
+            try {
+                Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+                while (interfaces.hasMoreElements()) {
+                    NetworkInterface iface = interfaces.nextElement();
+                    // Filtra le interfacce di loopback e quelle non attive
+                    if (iface.isLoopback() || !iface.isUp()) {
+                        continue;
+                    }
+
+                    Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                    InetAddress addr = null;
+                    while (addresses.hasMoreElements()) {
+                        addr = addresses.nextElement();
+                        // Filtra gli indirizzi IPv6 e quelli di loopbackif (addr.isLoopbackAddress() || addr.getAddress().length != 4) {
+                        continue;
+                    }
+                    // Restituisce il primo indirizzo IPv4 locale trovato
+                    return addr.getHostAddress();
+                }
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+            return null; // Restituisce null se non trova un indirizzo IPv4
+        }
+}
